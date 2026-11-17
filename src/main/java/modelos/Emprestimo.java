@@ -77,7 +77,11 @@ public class Emprestimo {
 		return devolver(LocalDate.now());
 	}
 	
-	public double devolver(LocalDate dataDevolucao) throws EmprestimoEncerradoException {
+	public double devolver(LocalDate dataDevolucao) throws EmprestimoEncerradoException, IllegalArgumentException {
+		if (dataDevolucao == null || dataDevolucao.isBefore(this.dataEmprestimo)) {
+    		throw new IllegalArgumentException("Data de devolução inválida.");
+		}
+
 		if(this.dataDevolucao != null) {
 			throw new EmprestimoEncerradoException("Não é possível encerrar este empréstimo pois ele já foi encerrado anteriormente na data: " + this.dataDevolucao);
 		}

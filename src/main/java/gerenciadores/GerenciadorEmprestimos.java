@@ -9,13 +9,6 @@ import excecoes.*;
 public class GerenciadorEmprestimos {
 	private ArrayList<Emprestimo> emprestimos;
     
-    public enum FiltroEmprestimos {
-        TODOS,
-        ATIVOS,
-        ENCERRADOS,
-        ATRASADOS
-    }
-    
     public GerenciadorEmprestimos() {
         this.emprestimos = new ArrayList<>();
     }

@@ -65,7 +65,7 @@ public class Livro {
 
     public void emprestarExemplar() throws LivroIndisponivelException {
         if (!temExemplar()) {
-            throw new LivroIndisponivelException("Nao tem um exemplar disponivel desse livro");
+            throw new LivroIndisponivelException("O livro não possui mais exemplares disponíveis.");
         }
         exemplaresDisponiveis = exemplaresDisponiveis - 1;
     }
@@ -78,18 +78,18 @@ public class Livro {
 
     public void aumentarTotalExemplares (int qtd) {
         if (qtd <= 0) {
-            throw new IllegalArgumentException("Quantidade invalida");
+            throw new IllegalArgumentException("Quantidade inválida. Insira um valor positivo.");
         }
         totalExemplares = totalExemplares + qtd;
         exemplaresDisponiveis = exemplaresDisponiveis + qtd;
     }
 
-    public void diminuirTotalExemplares(int qtd) {
+    public void diminuirTotalExemplares(int qtd) throws OperacaoInvalidaException {
         if (qtd <= 0) {
-            throw new IllegalArgumentException("Quantidade invalida");
+            throw new IllegalArgumentException("Quantidade inválida. Insira um valor positivo.");
         }
         if (qtd > exemplaresDisponiveis) {
-            throw new IllegalArgumentException("A quantidade retirada eh maior que a quantidade de exemplares disponiveis");
+            throw new OperacaoInvalidaException("A quantidade a ser retirada é maior que a quantidade de exemplares disponíveis.");
         }
         totalExemplares = totalExemplares - qtd;
         exemplaresDisponiveis = exemplaresDisponiveis - qtd;

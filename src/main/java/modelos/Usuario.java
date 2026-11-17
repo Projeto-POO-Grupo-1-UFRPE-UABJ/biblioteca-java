@@ -15,6 +15,12 @@ public abstract class Usuario {
 		this.limite = 0;
 	}
 	
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+	public void setMatricula(String matricula) {
+		this.matricula = matricula;
+	}
 	public int getId() {
 		return id;
 	}
@@ -32,7 +38,9 @@ public abstract class Usuario {
 		return limite < getLimiteMaximo();
 	}
 	public void somarLimite() {
-		limite++;
+		if (limite < getLimiteMaximo()) {
+        	limite++;
+    	}
 	}
 	public void subtrairLimite() {
 		if(limite > 0) {
