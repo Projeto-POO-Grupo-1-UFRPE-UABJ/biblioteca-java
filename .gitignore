@@ -1,3 +1,13 @@
+# Compilação e Maven
 target/
-.vscode/
 *.class
+*.jar
+*.war
+
+# IDEs e Editores
+.vscode/
+.idea/
+*.iml
+.settings/
+.project
+.classpath
