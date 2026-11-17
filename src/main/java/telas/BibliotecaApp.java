@@ -45,11 +45,11 @@ public class BibliotecaApp {
                     break;
 
                 case 0:
-                    System.out.println("Encerrando o sistema...");
+                    System.out.println("\nEncerrando o sistema...");
                     break;
 
                 default:
-                    System.out.println("Opção inválida. Tente novamente.");
+                    System.out.println("\nOpção inválida. Tente novamente.\n");
             }
         } while (opcao != 0);
 
@@ -83,7 +83,7 @@ public class BibliotecaApp {
             if (!texto.isEmpty()) {
                 return texto;
             }
-            System.out.println("Esse campo não pode ficar vazio. Por favor, insira algo.");
+            System.out.println("\nEsse campo não pode ficar vazio. Por favor, insira algo.\n");
         }
     }
 
@@ -94,14 +94,14 @@ public class BibliotecaApp {
             try {
                 return Integer.parseInt(linha.trim());
             } catch (NumberFormatException e) {
-                System.out.println("Por favor, digite um número inteiro.");
+                System.out.println("\nPor favor, digite um número inteiro.\n");
             }
         }
     }
 
     private static void listarLivros() {
         if(livros.isEmpty()) {
-            System.out.println("Nenhum livro cadastrado.");
+            System.out.println("\nNenhum livro cadastrado.\n");
             return;
         }
         
