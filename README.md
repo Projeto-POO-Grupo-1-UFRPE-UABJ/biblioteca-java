@@ -11,13 +11,64 @@
 
 ---
 
-Sistema de biblioteca em Java com telas Swing, banco SQLite e relatório CSV. Controla livros, alunos e professores, empréstimos, devoluções e multas por atraso.
+## 📋 Índice
 
-**-Relações:**
+- [Sobre o Projeto](#-sobre-o-projeto)
+- [Funcionalidades](#-funcionalidades)
+- [Regras de Negócio](#%EF%B8%8F-regras-de-negócio)
+- [Conceitos da Programação Orientada a Objetos](#-conceitos-da-programação-orientada-a-objetos)
+- [Instalação e Execução](#-instalação-e-execução)
+- [Cronograma de Entregas](#-cronograma-de-entregas)
 
-Usuário-Aluno e Usuário-Professor (herança): as classes Aluno e Professor estabelecem uma relação de herança direta com a superclasse abstrata Usuario. Desse modo, atributos comuns e essenciais ao domínio (como identificador, nome e matrícula) são centralizados na classe genérica, enquanto as subclasses especializadas implementam os comportamentos polimórficos particulares de sua regra de negócio.
+---
 
+## 📖 Sobre o Projeto
 
-Empréstimo-Usuário e Empréstimo-Livro (agregação): o emprestimo funciona como agregador que referencia as duas classes. Se um empréstimo for excluido, o usuário e o livro não devem ser apagados. O emprestimo é o “todo” e o usuário/livro são as partes. Adotou-se conceitualmente a relação de agregação para evidenciar a independência de ciclo de vida entre as entidades: caso um registro de empréstimo seja encerrado ou excluído do sistema, as instâncias de Usuario e Livro continuam existindo de maneira autônoma no banco de dados, sem sofrer remoção em cascata.
+[Para fazer: texto explicando o projeto da biblioteca]
 
+---
 
+## ✨ Funcionalidades
+
+[Para fazer: tabela falando das funcionalidades]
+
+---
+
+## ⚖️ Regras de Negócio
+
+[Para fazer: tava pensando em falar das restrições diferentes de aluno e professor aqui com seus limites e falar das exceções personalizadas]
+
+---
+
+## 🧩 Conceitos da Programação Orientada a Objetos
+
+[Para fazer: aqui precisa explicar como a gnt aplicou os conceitos de POO que tava pedindo no guia do projeto]
+
+---
+
+## 🚀 Instalação e Execução
+
+> [!IMPORTANT]
+> Este projeto requer o **Java JDK 17** ou superior instalado na máquina.
+
+### Opção 1: Clonando o Repositório
+
+1. Clone o projeto e acesse a pasta.
+2. Execute o arquivo **BibliotecaApp.java** localizado em `src/main/java/telas` em sua IDE de preferência ou através do terminal.
+
+### Opção 2: Pelo Executável
+
+1. Baixe o arquivo `biblioteca-ENTREGA-2.jar` [aqui](https://github.com/Projeto-POO-Grupo-1-UFRPE-UABJ/biblioteca-java/releases/tag/entrega2).
+2. Abra o terminal na pasta onde o arquivo foi salvo e execute o seguinte comando:
+
+   ```bash
+   java -jar biblioteca-ENTREGA-2.jar
+   ```
+   
+---
+
+## 📆 Cronograma de Entregas
+
+- [x] **Entrega 1 (`06/11`) - Modelagem:** Diagrama UML e protótipos de tela. [<kbd>🏷️ entrega1</kbd>](https://github.com/Projeto-POO-Grupo-1-UFRPE-UABJ/biblioteca-java/tree/entrega1)
+- [X] **Entrega 2 (`19/11`) - Núcleo do Domínio:** Classes de modelo, regras de negócio aplicadas, exceções e main funcional no terminal. [<kbd>🏷️ entrega2</kbd>](https://github.com/Projeto-POO-Grupo-1-UFRPE-UABJ/biblioteca-java/tree/entrega2)
+- [ ] **Entrega 3 (`27/11`) - Versão Final (Dados e GUI):** Integração com banco SQLite, classes DAO, interface gráfica em Swing e exportação CSV. <kbd>🏷️ entrega3</kbd>
