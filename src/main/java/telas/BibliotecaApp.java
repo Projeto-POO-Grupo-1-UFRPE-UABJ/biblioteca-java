@@ -5,6 +5,8 @@ import java.util.Scanner;
 import gerenciadores.GerenciadorEmprestimos;
 import modelos.Livro;
 import modelos.Usuario;
+import java.time.LocalDate;
+import gerenciadores.FiltroEmprestimos;
 
 public class BibliotecaApp {
     
@@ -37,11 +39,11 @@ public class BibliotecaApp {
                     break;
 
                 case 4:
-                    emprestarLivro();
+                    realizarEmprestimo();
                     break;
 
                 case 5:
-                    devolverLivro();
+                    encerrarEmprestimo();
                     break;
 
                 case 0:
@@ -61,8 +63,8 @@ public class BibliotecaApp {
         System.out.println("1 - Listar Livros");
         System.out.println("2 - Listar Usuários");
         System.out.println("3 - Listar Empréstimos");
-        System.out.println("4 - Emprestar Livro");
-        System.out.println("5 - Devolver Livro");
+        System.out.println("4 - Realizar Empréstimo");
+        System.out.println("5 - Encerrar Empréstimo");
         System.out.println("0 - Sair");
         System.out.println("Escolha uma opção: ");
     }
@@ -117,22 +119,98 @@ public class BibliotecaApp {
     }
 
     private static void listarUsuarios() {
-    
+        if(usuarios.isEmpty()) {
+            System.out.println("\nNenhum usuário cadastrado.\n");
+            return;
+        }
+
+        System.out.println("\n===== Usuários Cadastrados =====");
+        for (Usuario usuario: usuarios) {
+            exibirUsuario(usuario);
+        }
     }
 
     private static void exibirUsuario(Usuario usuario) {
-
+        System.out.println("ID: " + usuario.getId() + " | Nome: " + usuario.getNome() + " | Matrícula: " + usuario.getMatricula());
     }
 
-    private static void emprestarLivro() {
-    
+    private static Usuario buscarUsuario(int idUsuario) {
+        for (Usuario usuario : usuarios) {
+            if (usuario.getId() == idUsuario) {
+                return usuario;
+            }
+        }
+        System.out.println("\nUsuário não encontrado.\n");
+        return null;
     }
 
-    private static void devolverLivro() {
-    
+    private static Livro buscarLivro(int idLivro) {
+        for (Livro livro : livros) {
+            if (livro.getId() == idLivro) {
+                return livro;
+            }
+        }
+        System.out.println("\nLivro não encontrado.\n");
+        return null;
+    }
+       
+    private static void realizarEmprestimo() {
+        try {
+            int idUsuario = lerInteiro("Digite o ID do usuário: ");
+            int idLivro = lerInteiro("Digite o ID do livro: ");
+
+            Usuario usuario = buscarUsuario(idUsuario);
+            Livro livro = buscarLivro(idLivro);
+
+            if (usuario != null && livro != null) {
+                gerenciador.realizarEmprestimo(usuario, livro);
+            }
+        } catch (Exception e) {
+            System.out.println("\nErro ao realizar empréstimo: " + e.getMessage() + "\n");
+        }
+    }
+
+    private static void encerrarEmprestimo() {
+        try {
+            int idEmprestimo = lerInteiro("Digite o ID do empréstimo: ");
+
+            System.out.print("A devolução foi feita hoje? (s/n): ");
+            String resposta = scanner.nextLine().trim().toLowerCase();
+            if (resposta.equals("s")) {
+                gerenciador.encerrarEmprestimo(idEmprestimo);
+            } else if (resposta.equals("n")) {
+                String dataDevolucaoStr = lerTexto("Digite a data de devolução (YYYY-MM-DD): ");
+                LocalDate dataDevolucao = LocalDate.parse(dataDevolucaoStr);
+                gerenciador.encerrarEmprestimo(idEmprestimo, dataDevolucao);
+            } else {
+                System.out.println("\nOpção inválida. Por favor, digite 's' ou 'n'.\n");
+            }
+
+
+        } catch (Exception e) {
+            System.out.println("\nErro ao encerrar empréstimo: " + e.getMessage() + "\n");
+        }
     }
 
     private static void listarEmprestimos() {
-    
+
+        switch (lerInteiro("Deseja filtrar os empréstimos? (1 - Todos, 2 - Ativos, 3 - Encerrados, 4 - Atrasados): ")) {
+            case 1:
+                System.out.println(gerenciador.listarEmprestimos(FiltroEmprestimos.TODOS));
+                break;
+            case 2:
+                System.out.println(gerenciador.listarEmprestimos(FiltroEmprestimos.ATIVOS));
+                break;
+            case 3:
+                System.out.println(gerenciador.listarEmprestimos(FiltroEmprestimos.ENCERRADOS));
+                break;
+
+            case 4:
+                System.out.println(gerenciador.listarEmprestimos(FiltroEmprestimos.ATRASADOS));
+                break;
+            default:
+                System.out.println("\nOpção inválida. Mostrando todos os empréstimos.\n");
+                System.out.println(gerenciador.listarEmprestimos(FiltroEmprestimos.TODOS));
+        }
     }
 }
