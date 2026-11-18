@@ -3,15 +3,31 @@ package telas;
 import java.util.ArrayList;
 import java.util.Scanner;
 import gerenciadores.GerenciadorEmprestimos;
+import modelos.Aluno;
 import modelos.Livro;
+import modelos.Professor;
 import modelos.Usuario;
 import java.time.LocalDate;
 import gerenciadores.FiltroEmprestimos;
+import java.util.List;
 
 public class BibliotecaApp {
     
-    private static ArrayList<Livro> livros = new ArrayList<>();
-    private static ArrayList<Usuario> usuarios = new ArrayList<>();
+     private static ArrayList<Usuario> usuarios = new ArrayList<>(List.of(
+        new Aluno(1, "Ana", "2026001"),
+        new Aluno(2, "Bruno", "2026002"),
+        new Aluno(3, "Carla", "2025001"),
+        new Professor(4, "Marcos", "P001"),
+        new Professor(5, "Lucia", "P002")
+    ));
+
+    private static ArrayList<Livro> livros = new ArrayList<>(List.of(
+        new Livro(1, "Java", "Deitel", "111", 5),
+        new Livro(2, "POO", "Kalb", "222", 4),
+        new Livro(3, "Banco de Dados", "Date", "333", 3),
+        new Livro(4, "UML", "Fowler", "444", 1)
+    ));
+
 
     private static GerenciadorEmprestimos gerenciador = new GerenciadorEmprestimos();
 
