@@ -119,9 +119,15 @@ public class GerenciadorEmprestimos {
         sb.append("- Autor livro: ").append(emprestimo.getLivro().getAutor()).append("\n");
         sb.append("- ISBN livro: ").append(emprestimo.getLivro().getIsbn()).append("\n");
         sb.append("- Id Livro: ").append(emprestimo.getLivro().getId()).append("\n"); 
+        sb.append("- Data do empréstimo: ").append(emprestimo.getDataEmprestimo()).append("\n");
+		sb.append("- Data de devolução prevista: ").append(emprestimo.getDataPrevista()).append("\n");
         
+		if (!emprestimo.estaAberto()) {
+		    sb.append("- Data de devolução: ").append(emprestimo.getDataDevolucao()).append("\n");
+		}
+
         if(emprestimo.estaAtrasado()) {
-            sb.append(emprestimo.estaAberto() ? "- Este empréstimo está ATRASADO.\n" : "- Este empréstimo foi devolvido com ATRASO.\n");
+            sb.append(emprestimo.estaAberto() ? "- Este empréstimo está com " : "- Este empréstimo foi DEVOLVIDO com ").append(emprestimo.calcAtraso()).append(" dias de ATRASO.\n");
             sb.append("- Multa ").append(emprestimo.estaAberto() ? "acumulada (até o momento): R$ " : "total: R$ ").append(String.format("%.2f", emprestimo.calcMulta())).append("\n");
         } else {
             sb.append("- Este empréstimo NÃO está atrasado.\n");
