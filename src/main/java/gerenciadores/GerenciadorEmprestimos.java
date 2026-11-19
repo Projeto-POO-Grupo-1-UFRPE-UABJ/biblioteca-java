@@ -20,6 +20,15 @@ public class GerenciadorEmprestimos {
     public ArrayList<Emprestimo> getEmprestimos() {
         return new ArrayList<Emprestimo>(emprestimos);
     }
+
+    public Emprestimo buscarEmprestimo(int id) throws RegistroNaoEncontradoException {
+        for (Emprestimo emprestimo : emprestimos) {
+            if(emprestimo.getId() == id) {
+                return emprestimo;
+            }
+        }
+        throw new RegistroNaoEncontradoException("Não há nenhum empréstimo com o Id " + id + ".");
+    }
     
     public Emprestimo realizarEmprestimo(Usuario usuario, Livro livro) throws LivroIndisponivelException, LimiteEmprestimosException {
         Emprestimo emprestimo = new Emprestimo(emprestimos.size() + 1, usuario, livro);
@@ -32,10 +41,7 @@ public class GerenciadorEmprestimos {
     }
     
     public double encerrarEmprestimo(int id, LocalDate dataDevolucao) throws RegistroNaoEncontradoException, EmprestimoEncerradoException {
-        if(emprestimos.isEmpty() || emprestimos.size() < id || id <= 0) {
-            throw new RegistroNaoEncontradoException("Não há nenhum empréstimo com o Id " + id + ".\nInsira um Id válido.");
-        }
-        return emprestimos.get(id - 1).devolver(dataDevolucao);
+        return buscarEmprestimo(id).devolver(dataDevolucao);
     }
     
     public String listarEmprestimos() {
@@ -119,13 +125,20 @@ public class GerenciadorEmprestimos {
         sb.append("- Autor livro: ").append(emprestimo.getLivro().getAutor()).append("\n");
         sb.append("- ISBN livro: ").append(emprestimo.getLivro().getIsbn()).append("\n");
         sb.append("- Id Livro: ").append(emprestimo.getLivro().getId()).append("\n"); 
+        sb.append("- Data do empréstimo: ").append(emprestimo.getDataEmprestimo()).append("\n");
+		sb.append("- Data de devolução prevista: ").append(emprestimo.getDataPrevista()).append("\n");
         
+		if (!emprestimo.estaAberto()) {
+		    sb.append("- Data de devolução: ").append(emprestimo.getDataDevolucao()).append("\n");
+		}
+
         if(emprestimo.estaAtrasado()) {
-            sb.append(emprestimo.estaAberto() ? "- Este empréstimo está ATRASADO.\n" : "- Este empréstimo foi devolvido com ATRASO.\n");
+            sb.append(emprestimo.estaAberto() ? "- Este empréstimo está com " : "- Este empréstimo foi DEVOLVIDO com ").append(emprestimo.calcAtraso()).append(" dias de ATRASO.\n");
             sb.append("- Multa ").append(emprestimo.estaAberto() ? "acumulada (até o momento): R$ " : "total: R$ ").append(String.format("%.2f", emprestimo.calcMulta())).append("\n");
         } else {
             sb.append("- Este empréstimo NÃO está atrasado.\n");
         }
+        
         sb.append("- Status: ").append((emprestimo.estaAberto() ? "ATIVO\n" : "ENCERRADO\n"));
         sb.append("\n");
 

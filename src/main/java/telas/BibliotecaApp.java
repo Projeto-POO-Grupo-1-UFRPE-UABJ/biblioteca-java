@@ -2,30 +2,35 @@ package telas;
 
 import java.util.ArrayList;
 import java.util.Scanner;
-import gerenciadores.GerenciadorEmprestimos;
-import modelos.Aluno;
-import modelos.Livro;
-import modelos.Professor;
-import modelos.Usuario;
+import gerenciadores.*;
+import modelos.*;
+import excecoes.*;
+import java.time.format.DateTimeParseException;
 import java.time.LocalDate;
-import gerenciadores.FiltroEmprestimos;
 import java.util.List;
 
 public class BibliotecaApp {
     
-     private static ArrayList<Usuario> usuarios = new ArrayList<>(List.of(
-        new Aluno(1, "Ana", "2026001"),
-        new Aluno(2, "Bruno", "2026002"),
-        new Aluno(3, "Carla", "2025001"),
-        new Professor(4, "Marcos", "P001"),
-        new Professor(5, "Lucia", "P002")
+    private static ArrayList<Usuario> usuarios = new ArrayList<>(List.of(
+        new Aluno(1, "Ana Beatriz Silva", "20241100123"),
+        new Aluno(2, "Bruno Henrique Costa", "20241100456"),
+        new Aluno(3, "Carla Maria Souza", "20231100789"),
+        new Aluno(4, "Diego Albuquerque Lima", "20251100234"),
+        new Professor(5, "Marcos Vinícius Cavalcanti", "2345678"),
+        new Professor(6, "Lúcia Helena Barros", "3456789")
     ));
 
     private static ArrayList<Livro> livros = new ArrayList<>(List.of(
-        new Livro(1, "Java", "Deitel", "111", 5),
-        new Livro(2, "POO", "Kalb", "222", 4),
-        new Livro(3, "Banco de Dados", "Date", "333", 3),
-        new Livro(4, "UML", "Fowler", "444", 1)
+        new Livro(1, "Cálculo, Volume 1", "James Stewart", "978-85-2161-042-7", 4),
+        new Livro(2, "Física Básica, Volume 1: Mecânica", "H. Moysés Nussenzveig", "978-85-2120-118-2", 3),
+        new Livro(3, "Algoritmos: Teoria e Prática", "Thomas H. Cormen", "978-85-3520-077-5", 3),
+        new Livro(4, "Java: Como Programar", "Paul Deitel", "978-85-7605-215-9", 5),
+        new Livro(5, "Dom Casmurro", "Machado de Assis", "978-85-3591-103-9", 2),
+        new Livro(6, "Vidas Secas", "Graciliano Ramos", "978-85-0101-506-8", 3),
+        new Livro(7, "Sapiens: Uma Breve História da Humanidade", "Yuval Noah Harari", "978-85-3591-220-3", 2),
+        new Livro(8, "Casa-Grande & Senzala", "Gilberto Freyre", "978-85-2602-031-3", 1),
+        new Livro(9, "Fisiologia Vegetal", "Lincoln Taiz e Eduardo Zeiger", "978-85-8271-154-5", 4),
+        new Livro(10, "Redes de Computadores", "Andrew S. Tanenbaum", "978-85-3520-092-8", 3)
     ));
 
 
@@ -82,7 +87,7 @@ public class BibliotecaApp {
         System.out.println("4 - Realizar Empréstimo");
         System.out.println("5 - Encerrar Empréstimo");
         System.out.println("0 - Sair");
-        System.out.println("Escolha uma opção: ");
+        System.out.print("Escolha uma opção: ");
     }
 
     private static int lerOpcao() {
@@ -126,12 +131,14 @@ public class BibliotecaApp {
         System.out.println("\n===== Livros Cadastrados =====");
         for (Livro livro: livros) {
             exibirLivro(livro);
+            System.out.println("");
         }
     }
 
     private static void exibirLivro(Livro livro) {
         System.out.println("ID: " + livro.getId() + " | Título: " + livro.getTitulo() + " | Autor: " + livro.getAutor() + 
-        " | ISBN: " + livro.getIsbn() + " | Exemplares: " + livro.getExemplaresDisponiveis() + " | Total de Exemplares: " + livro.getTotalExemplares());
+        " | ISBN: " + livro.getIsbn());
+        System.out.println(" | Exemplares Disponíveis: " + livro.getExemplaresDisponiveis() + " | Total de Exemplares: " + livro.getTotalExemplares());
     }
 
     private static void listarUsuarios() {
@@ -143,85 +150,109 @@ public class BibliotecaApp {
         System.out.println("\n===== Usuários Cadastrados =====");
         for (Usuario usuario: usuarios) {
             exibirUsuario(usuario);
+            System.out.println("");
         }
     }
 
     private static void exibirUsuario(Usuario usuario) {
-        System.out.println("ID: " + usuario.getId() + " | Nome: " + usuario.getNome() + " | Matrícula: " + usuario.getMatricula());
+        System.out.println("ID: " + usuario.getId() + " | " + usuario.getTipo() + ": " + usuario.getNome()
+    	+ " | Matrícula: " + usuario.getMatricula());
+    	System.out.println(" | Prazo: " + usuario.getPrazo() + " dias | Multa: R$ " + String.format("%.2f", usuario.getTaxa())
+    	+ " por dia | Empréstimos: " + usuario.getLimite() + "/" + usuario.getLimiteMaximo());
     }
 
-    private static Usuario buscarUsuario(int idUsuario) {
-        for (Usuario usuario : usuarios) {
-            if (usuario.getId() == idUsuario) {
-                return usuario;
-            }
-        }
-        System.out.println("\nUsuário não encontrado.\n");
-        return null;
-    }
+    private static Usuario buscarUsuario(int id) throws RegistroNaoEncontradoException {
+	    for (Usuario usuario : usuarios) {
+	        if (usuario.getId() == id) return usuario;
+	    }
+	    throw new RegistroNaoEncontradoException("Não há nenhum usuário com o Id " + id + ".");
+	}
 
-    private static Livro buscarLivro(int idLivro) {
-        for (Livro livro : livros) {
-            if (livro.getId() == idLivro) {
-                return livro;
-            }
-        }
-        System.out.println("\nLivro não encontrado.\n");
-        return null;
-    }
-       
+    private static Livro buscarLivro(int id) throws RegistroNaoEncontradoException {
+	    for (Livro livro : livros) {
+	        if (livro.getId() == id) return livro;
+	    }
+	    throw new RegistroNaoEncontradoException("Não há nenhum livro com o Id " + id + ".");
+	}
+
     private static void realizarEmprestimo() {
-        try {
-            int idUsuario = lerInteiro("Digite o ID do usuário: ");
-            int idLivro = lerInteiro("Digite o ID do livro: ");
+    try {
+        System.out.println("\nRealizando Empréstimo: ");
+        Usuario usuario = buscarUsuario(lerInteiro("Digite o ID do usuário: "));
+        Livro livro = buscarLivro(lerInteiro("Digite o ID do livro: "));
 
-            Usuario usuario = buscarUsuario(idUsuario);
-            Livro livro = buscarLivro(idLivro);
-
-            if (usuario != null && livro != null) {
-                gerenciador.realizarEmprestimo(usuario, livro);
-            }
-        } catch (Exception e) {
-            System.out.println("\nErro ao realizar empréstimo: " + e.getMessage() + "\n");
-        }
+        Emprestimo e = gerenciador.realizarEmprestimo(usuario, livro);
+        System.out.println("\nEmpréstimo " + e.getId() + " realizado. Devolver até " + e.getDataPrevista() + ".\n");
+    } catch (LimiteEmprestimosException | LivroIndisponivelException | RegistroNaoEncontradoException e) {
+        System.out.println("\nNão foi possível emprestar:\n" + e.getMessage() + "\n");
     }
+}
 
-    private static void encerrarEmprestimo() {
-        try {
-            int idEmprestimo = lerInteiro("Digite o ID do empréstimo: ");
+	private static void encerrarEmprestimo() {
+	    try {
+	        System.out.println("\nEncerrando Empréstimo: ");
+	        Emprestimo emprestimo = gerenciador.buscarEmprestimo(lerInteiro("Digite o ID do empréstimo: "));
+	        int id = emprestimo.getId();
+	        
+	        if (!emprestimo.estaAberto()) {
+	            throw new EmprestimoEncerradoException("Não é possível encerrar este empréstimo pois ele já foi encerrado anteriormente na data: " + emprestimo.getDataDevolucao());
+	        }
+	        
+	        System.out.println("\nEmpréstimo de Id " + id + " encontrado:");
+	        System.out.println("\nUsuário: " + emprestimo.getUsuario().getNome() 
+		    + " | Livro: " + emprestimo.getLivro().getTitulo() 
+		    + " | Data prevista: " + emprestimo.getDataPrevista() + "\n");
+	        
+	        String resposta;
+			do {
+			    resposta = lerTexto("A devolução foi feita hoje? (s/n) ou 'c' para cancelar: ");
+			    if (!resposta.equalsIgnoreCase("s") && !resposta.equalsIgnoreCase("n") && !resposta.equalsIgnoreCase("c")) {
+			        System.out.println("\nOpção inválida!\nDigite 's', 'n' ou 'c'.\n");
+			    }
+			} while (!resposta.equalsIgnoreCase("s") && !resposta.equalsIgnoreCase("n") && !resposta.equalsIgnoreCase("c"));
+			
+			if (resposta.equalsIgnoreCase("c")) {
+			    System.out.println("\nOperação cancelada.\n");
+			    return;
+			}
+			
+			double multa;
+			if (resposta.equalsIgnoreCase("s")) {
+			    multa = gerenciador.encerrarEmprestimo(id);
+			} else {
+			    LocalDate data = LocalDate.parse(lerTexto("Data de devolução (AAAA-MM-DD): "));
+			    multa = gerenciador.encerrarEmprestimo(id, data);
+			}
+	
+	        System.out.println("\nEmpréstimo encerrado. " +
+	            (multa > 0.0 ? String.format("Multa: R$ %.2f%n", multa) : "Sem multa.\n"));
+	
+	    } catch (RegistroNaoEncontradoException | EmprestimoEncerradoException | IllegalArgumentException e) {
+	        System.out.println("\nNão foi possível encerrar:\n" + e.getMessage() + "\n");
+	    } catch (DateTimeParseException e) {
+	        System.out.println("\nData inválida.\nUse o formato AAAA-MM-DD.\n");
+	    }
+	}
 
-            System.out.print("A devolução foi feita hoje? (s/n): ");
-            String resposta = scanner.nextLine().trim().toLowerCase();
-            if (resposta.equals("s")) {
-                gerenciador.encerrarEmprestimo(idEmprestimo);
-            } else if (resposta.equals("n")) {
-                String dataDevolucaoStr = lerTexto("Digite a data de devolução (YYYY-MM-DD): ");
-                LocalDate dataDevolucao = LocalDate.parse(dataDevolucaoStr);
-                gerenciador.encerrarEmprestimo(idEmprestimo, dataDevolucao);
-            } else {
-                System.out.println("\nOpção inválida. Por favor, digite 's' ou 'n'.\n");
-            }
-
-
-        } catch (Exception e) {
-            System.out.println("\nErro ao encerrar empréstimo: " + e.getMessage() + "\n");
-        }
-    }
 
     private static void listarEmprestimos() {
-
-        switch (lerInteiro("Deseja filtrar os empréstimos? (1 - Todos, 2 - Ativos, 3 - Encerrados, 4 - Atrasados): ")) {
+		System.out.println("");
+        
+        switch (lerInteiro("Deseja filtrar os empréstimos?\n(1 - Todos, 2 - Ativos, 3 - Encerrados, 4 - Atrasados): ")) {
             case 1:
+            	System.out.println("");
                 System.out.println(gerenciador.listarEmprestimos(FiltroEmprestimos.TODOS));
                 break;
             case 2:
+            	System.out.println("");
                 System.out.println(gerenciador.listarEmprestimos(FiltroEmprestimos.ATIVOS));
                 break;
             case 3:
+            	System.out.println("");
                 System.out.println(gerenciador.listarEmprestimos(FiltroEmprestimos.ENCERRADOS));
                 break;
-
             case 4:
+            	System.out.println("");
                 System.out.println(gerenciador.listarEmprestimos(FiltroEmprestimos.ATRASADOS));
                 break;
             default:
