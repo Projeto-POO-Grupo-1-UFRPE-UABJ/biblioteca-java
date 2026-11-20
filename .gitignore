@@ -11,3 +11,14 @@ target/
 .settings/
 .project
 .classpath
+dependency-reduced-pom.xml
+
+# Banco de dados
+*.db-journal
+*.db-wal
+*.db-shm
+*.db
+
+# Sistema Operacional
+.DS_Store
+Thumbs.db

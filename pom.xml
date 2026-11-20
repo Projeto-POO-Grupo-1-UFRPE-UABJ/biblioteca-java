@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://apache.org"
-         xmlns:xsi="http://w3.org"
-         xsi:schemaLocation="http://apache.org http://apache.org">
+<project>
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.uabjoteca</groupId>
     <artifactId>biblioteca</artifactId>
-    <version>ENTREGA-2</version>
+    <version>ENTREGA-3</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -14,19 +12,35 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+            <version>3.54.1.0</version>
+        </dependency>
+    </dependencies>
+
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.5.1</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>telas.BibliotecaApp</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.6.2</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>telas.BibliotecaApp</mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
