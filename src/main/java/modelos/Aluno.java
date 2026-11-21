@@ -5,6 +5,10 @@ public class Aluno extends Usuario {
 	    public Aluno(int id, String nome, String matricula) {
 	        super(id, nome, matricula);
 	    }
+
+		public Aluno(int id, String nome, String matricula, int limite) {
+    		super(id, nome, matricula, limite);
+		}
 	 
 	    @Override
 	    public int getPrazo() {
