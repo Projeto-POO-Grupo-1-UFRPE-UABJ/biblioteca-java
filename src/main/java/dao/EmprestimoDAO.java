@@ -29,7 +29,6 @@ public class EmprestimoDAO {
 
             declaracao.executeUpdate();
 
-            // Atualiza o ID do objeto com o ID gerado pelo SQLite
             try (ResultSet chavesGeradas = declaracao.getGeneratedKeys()) {
                 if (chavesGeradas.next()) {
                     emprestimo.setId(chavesGeradas.getInt(1));
