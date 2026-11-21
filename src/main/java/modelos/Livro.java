@@ -19,6 +19,15 @@ public class Livro {
         this.exemplaresDisponiveis = totalExemplares;
     }
 
+    public Livro(int id, String titulo, String autor, String isbn, int totalExemplares, int exemplaresDisponiveis) {
+        this.id = id;
+        this.titulo = titulo;
+        this.autor = autor;
+        this.isbn = isbn;
+        this.totalExemplares = totalExemplares;
+        this.exemplaresDisponiveis = exemplaresDisponiveis;
+    }
+    
     public int getId() {
         return id;
     }
