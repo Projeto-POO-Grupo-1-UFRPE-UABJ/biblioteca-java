@@ -3,8 +3,10 @@ package telas;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.*;
+import java.beans.*;
 
-public class TelaMenu extends JFrame implements ActionListener {
+public class TelaMenu extends JFrame implements ActionListener, PropertyChangeListener {
     private final JPanel painelTopo = new JPanel(new BorderLayout());
     private final JPanel painelTitulo = new JPanel(new GridLayout(2, 1));
     private JPanel painelMeio = new JPanel(new GridLayout(2, 1));
@@ -29,6 +31,7 @@ public class TelaMenu extends JFrame implements ActionListener {
         this.setLocationRelativeTo(null);
         this.setResizable(false);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        this.addPropertyChangeListener("graphicsConfiguration", this);
 
         this.add(painelTopo, BorderLayout.NORTH);
         this.add(painelMeio, BorderLayout.CENTER);
@@ -76,14 +79,18 @@ public class TelaMenu extends JFrame implements ActionListener {
         }
     }
 
-    public static void main(String[] args) {
-        TelaMenu menu = new TelaMenu();
-        menu.setVisible(true);
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        this.revalidate();
+        this.repaint();
     }
 
     private ImageIcon carregarImagem(String caminho, int largura, int altura) {
-        ImageIcon icone = new ImageIcon(getClass().getResource(caminho));
-        return new ImageIcon(icone.getImage().getScaledInstance(largura, altura, Image.SCALE_SMOOTH));
+        Image img = new ImageIcon(getClass().getResource(caminho)).getImage();
+        return new ImageIcon(new BaseMultiResolutionImage(
+                new ImageIcon(img.getScaledInstance(largura, altura, Image.SCALE_SMOOTH)).getImage(),
+                new ImageIcon(img.getScaledInstance(largura * 2, altura * 2, Image.SCALE_SMOOTH)).getImage()
+        ));
     }
 
     private JButton criarBotao(String texto) {
@@ -97,5 +104,10 @@ public class TelaMenu extends JFrame implements ActionListener {
 
         botao.addActionListener(this);
         return botao;
+    }
+
+    public static void main(String[] args) {
+        TelaMenu menu = new TelaMenu();
+        menu.setVisible(true);
     }
 }
