@@ -90,7 +90,6 @@ public class EmprestimoDAO {
         int limite = rs.getInt("limite");
         Usuario usuario;
 
-        // Proteção contra nulos e case-insensitive
         if ("Professor".equalsIgnoreCase(rs.getString("tipo_usuario"))) {
             usuario = new Professor(rs.getInt("id_usuario"), rs.getString("nome"), rs.getString("matricula"), limite);
         } else {
