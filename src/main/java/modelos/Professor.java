@@ -5,6 +5,10 @@ public class Professor extends Usuario {
     public Professor(int id, String nome, String matricula) {
         super(id, nome, matricula);
     }
+
+	public Professor(int id, String nome, String matricula, int limite) {
+    	super(id, nome, matricula, limite);
+	}
  
     @Override
     public int getPrazo() {
