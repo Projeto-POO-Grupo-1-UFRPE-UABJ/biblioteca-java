@@ -3,10 +3,9 @@ package telas;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.*;
-import java.beans.*;
+import java.util.List;
 
-public class TelaMenu extends JFrame implements ActionListener, PropertyChangeListener {
+public class TelaMenu extends JFrame implements ActionListener {
     private final JPanel painelTopo = new JPanel(new BorderLayout());
     private final JPanel painelTitulo = new JPanel(new GridLayout(2, 1));
     private JPanel painelMeio = new JPanel(new GridLayout(2, 1));
@@ -26,12 +25,10 @@ public class TelaMenu extends JFrame implements ActionListener, PropertyChangeLi
 
     public TelaMenu() {
         this.setTitle("UABJoteca");
-        this.setSize(950, 620);
+        ajustarTamanho();
         this.setIconImage(carregarImagem("/imagens/logo_uabjoteca.png", 64, 64).getImage());
         this.setLocationRelativeTo(null);
-        this.setResizable(false);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        this.addPropertyChangeListener("graphicsConfiguration", this);
 
         this.add(painelTopo, BorderLayout.NORTH);
         this.add(painelMeio, BorderLayout.CENTER);
@@ -79,18 +76,9 @@ public class TelaMenu extends JFrame implements ActionListener, PropertyChangeLi
         }
     }
 
-    @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        this.revalidate();
-        this.repaint();
-    }
-
     private ImageIcon carregarImagem(String caminho, int largura, int altura) {
-        Image img = new ImageIcon(getClass().getResource(caminho)).getImage();
-        return new ImageIcon(new BaseMultiResolutionImage(
-                new ImageIcon(img.getScaledInstance(largura, altura, Image.SCALE_SMOOTH)).getImage(),
-                new ImageIcon(img.getScaledInstance(largura * 2, altura * 2, Image.SCALE_SMOOTH)).getImage()
-        ));
+        ImageIcon icone = new ImageIcon(this.getClass().getResource(caminho));
+        return new ImageIcon(icone.getImage().getScaledInstance(largura, altura, 4));
     }
 
     private JButton criarBotao(String texto) {
@@ -106,7 +94,20 @@ public class TelaMenu extends JFrame implements ActionListener, PropertyChangeLi
         return botao;
     }
 
+    private void ajustarTamanho() {
+        Dimension tela = Toolkit.getDefaultToolkit().getScreenSize();
+        double escala = tela.width / 1920.0;
+        int largura = Math.max((int) (950 * escala), 860);
+        int altura = Math.max((int) (620 * escala), 500);
+
+        this.setSize(largura, altura);
+        this.setMinimumSize(new Dimension(largura, altura));
+    }
+
     public static void main(String[] args) {
+        System.setProperty("sun.java2d.win.uiScaleX", "1.0");
+        System.setProperty("sun.java2d.win.uiScaleY", "1.0");
+
         TelaMenu menu = new TelaMenu();
         menu.setVisible(true);
     }
