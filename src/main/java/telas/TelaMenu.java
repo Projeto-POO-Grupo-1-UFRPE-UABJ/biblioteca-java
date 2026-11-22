@@ -3,6 +3,7 @@ package telas;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.SQLException;
 
 public class TelaMenu extends JFrame implements ActionListener {
     private final JPanel painelTopo = new JPanel(new BorderLayout());
@@ -58,20 +59,29 @@ public class TelaMenu extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getSource() == botaoUsuarios) {
-            TelaUsuarios menuUsuarios = new TelaUsuarios();
-            menuUsuarios.setVisible(true);
-            this.dispose();
+        try {
+            if (e.getSource() == botaoUsuarios) {
+                TelaUsuarios menuUsuarios = new TelaUsuarios();
+                menuUsuarios.setVisible(true);
+                this.dispose();
 
-        } else if(e.getSource() == botaoEmprestimos) {
-            TelaEmprestimos menuEmprestimos = new TelaEmprestimos();
-            menuEmprestimos.setVisible(true);
-            this.dispose();
+            } else if (e.getSource() == botaoEmprestimos) {
+                TelaEmprestimos menuEmprestimos = new TelaEmprestimos();
+                menuEmprestimos.setVisible(true);
+                this.dispose();
 
-        } else if(e.getSource() == botaoLivros) {
-            TelaLivros menuLivros = new TelaLivros();
-            menuLivros.setVisible(true);
-            this.dispose();
+            } else if (e.getSource() == botaoLivros) {
+                TelaLivros menuLivros = new TelaLivros();
+                menuLivros.setVisible(true);
+                this.dispose();
+            }
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Erro ao conectar com o banco de dados: " + ex.getMessage(),
+                    "Erro de Conexão",
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
     }
 
@@ -88,7 +98,7 @@ public class TelaMenu extends JFrame implements ActionListener {
         return botao;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         System.setProperty("sun.java2d.win.uiScaleX", "1.0");
         System.setProperty("sun.java2d.win.uiScaleY", "1.0");
 

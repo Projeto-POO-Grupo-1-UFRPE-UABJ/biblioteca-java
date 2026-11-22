@@ -23,7 +23,7 @@ public class Utilidades {
         textoTitulo.setForeground(Color.WHITE);
         textoTitulo.setFont(new Font("Arial", Font.BOLD, 80));
 
-        ajustarTamanho(tela);
+        ajustarTamanho(tela, 1150, 800, 950, 680);
         tela.add(painelTopo, BorderLayout.NORTH);
         tela.setTitle("UABJoteca: " + titulo);
         tela.setLocationRelativeTo(null);
@@ -37,6 +37,7 @@ public class Utilidades {
         linhaTitulo.add(textoTitulo);
         linhaTitulo.add(imagemUfrpe, BorderLayout.EAST);
         linhaTitulo.setOpaque(false);
+        linhaTitulo.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5));
 
         painelTopo.add(linhaBotao, BorderLayout.NORTH);
         painelTopo.add(linhaTitulo, BorderLayout.CENTER);
@@ -68,12 +69,30 @@ public class Utilidades {
     }
 
     public static void ajustarTamanho(JFrame tela) {
+        ajustarTamanho(tela, 950, 620, 860, 500);
+    }
+
+    public static void ajustarTamanho(JFrame tela, int baseLargura, int baseAltura, int minLargura, int minAltura) {
         Dimension monitor = Toolkit.getDefaultToolkit().getScreenSize();
         double escala = monitor.width / 1920.0;
-        int largura = Math.max((int) (950 * escala), 860);
-        int altura = Math.max((int) (620 * escala), 500);
+
+        int largura = Math.max((int) (baseLargura * escala), minLargura);
+        int altura = Math.max((int) (baseAltura * escala), minAltura);
 
         tela.setSize(largura, altura);
         tela.setMinimumSize(new Dimension(largura, altura));
+    }
+
+    public static JPanel criarCaixa(String titulo, JTextField campo) {
+        JPanel bloco = new JPanel(new BorderLayout(0, 4));
+        bloco.setOpaque(false);
+
+        JLabel label = new JLabel(titulo);
+        label.setFont(new Font("SansSerif", Font.BOLD, 14));
+
+        bloco.add(label, BorderLayout.NORTH);
+        bloco.add(campo, BorderLayout.CENTER);
+
+        return bloco;
     }
 }
