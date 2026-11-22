@@ -3,7 +3,6 @@ package telas;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.List;
 
 public class TelaMenu extends JFrame implements ActionListener {
     private final JPanel painelTopo = new JPanel(new BorderLayout());
@@ -16,8 +15,8 @@ public class TelaMenu extends JFrame implements ActionListener {
 
     private JLabel textoInicial = new JLabel("Menu Inicial", SwingConstants.CENTER);
 
-    private JLabel imagemCoruja = new JLabel(carregarImagem("/imagens/logo_uabjoteca.png", 150, 150));
-    private JLabel imagemUfrpe = new JLabel(carregarImagem("/imagens/logo_ufrpe.png", 150, 150));
+    private JLabel imagemCoruja = new JLabel(Utilidades.carregarImagem("/imagens/logo_uabjoteca.png", 150, 150));
+    private JLabel imagemUfrpe = new JLabel(Utilidades.carregarImagem("/imagens/logo_ufrpe.png", 150, 150));
 
     private JButton botaoUsuarios = criarBotao("Usuários");
     private JButton botaoEmprestimos = criarBotao("Empréstimos");
@@ -25,8 +24,8 @@ public class TelaMenu extends JFrame implements ActionListener {
 
     public TelaMenu() {
         this.setTitle("UABJoteca");
-        ajustarTamanho();
-        this.setIconImage(carregarImagem("/imagens/logo_uabjoteca.png", 64, 64).getImage());
+        Utilidades.ajustarTamanho(this);
+        this.setIconImage(Utilidades.carregarImagem("/imagens/logo_uabjoteca.png", 64, 64).getImage());
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 
@@ -76,11 +75,6 @@ public class TelaMenu extends JFrame implements ActionListener {
         }
     }
 
-    private ImageIcon carregarImagem(String caminho, int largura, int altura) {
-        ImageIcon icone = new ImageIcon(this.getClass().getResource(caminho));
-        return new ImageIcon(icone.getImage().getScaledInstance(largura, altura, 4));
-    }
-
     private JButton criarBotao(String texto) {
         JButton botao = new JButton(texto);
 
@@ -94,21 +88,11 @@ public class TelaMenu extends JFrame implements ActionListener {
         return botao;
     }
 
-    private void ajustarTamanho() {
-        Dimension tela = Toolkit.getDefaultToolkit().getScreenSize();
-        double escala = tela.width / 1920.0;
-        int largura = Math.max((int) (950 * escala), 860);
-        int altura = Math.max((int) (620 * escala), 500);
-
-        this.setSize(largura, altura);
-        this.setMinimumSize(new Dimension(largura, altura));
-    }
-
     public static void main(String[] args) {
         System.setProperty("sun.java2d.win.uiScaleX", "1.0");
         System.setProperty("sun.java2d.win.uiScaleY", "1.0");
 
-        TelaMenu menu = new TelaMenu();
+        TelaLivros menu = new TelaLivros();
         menu.setVisible(true);
     }
 }
