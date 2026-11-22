@@ -8,7 +8,7 @@ import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
 public class Utilidades {
 
-    public static void configurarTela(String titulo, JFrame tela) {
+    public static void configurarTela(String titulo, JFrame tela, int largura, int altura, Point posicao, int estado) {
         JPanel painelTopo = new JPanel(new BorderLayout());
         JPanel linhaBotao = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
         JPanel linhaTitulo = new JPanel(new BorderLayout());
@@ -23,10 +23,10 @@ public class Utilidades {
         textoTitulo.setForeground(Color.WHITE);
         textoTitulo.setFont(new Font("Arial", Font.BOLD, 80));
 
-        ajustarTamanho(tela, 1150, 800, 950, 680);
+        ajustarTamanho(tela, largura, altura, 950, 680, posicao, estado);
+        tela.setLayout(new BorderLayout(0, 15));
         tela.add(painelTopo, BorderLayout.NORTH);
         tela.setTitle("UABJoteca: " + titulo);
-        tela.setLocationRelativeTo(null);
         tela.setDefaultCloseOperation(EXIT_ON_CLOSE);
         tela.setIconImage(carregarImagem("/imagens/logo_uabjoteca.png", 64, 64).getImage());
 
@@ -47,7 +47,7 @@ public class Utilidades {
         botaoVoltar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                TelaMenu menu = new TelaMenu();
+                TelaMenu menu = new TelaMenu(tela.getWidth(), tela.getHeight(), tela.getLocation(), tela.getExtendedState());
                 menu.setVisible(true);
                 tela.dispose();
             }
@@ -68,11 +68,11 @@ public class Utilidades {
         return new ImageIcon(icone.getImage().getScaledInstance(largura, altura, 4));
     }
 
-    public static void ajustarTamanho(JFrame tela) {
-        ajustarTamanho(tela, 950, 620, 860, 500);
+    public static void ajustarTamanho(Window tela, int baseLargura, int baseAltura, int minLargura, int minAltura) {
+        ajustarTamanho(tela, baseLargura, baseAltura, minLargura, minAltura, null, JFrame.NORMAL);
     }
 
-    public static void ajustarTamanho(JFrame tela, int baseLargura, int baseAltura, int minLargura, int minAltura) {
+    public static void ajustarTamanho(Window tela, int baseLargura, int baseAltura, int minLargura, int minAltura, Point posicao, int estado) {
         Dimension monitor = Toolkit.getDefaultToolkit().getScreenSize();
         double escala = monitor.width / 1920.0;
 
@@ -80,7 +80,20 @@ public class Utilidades {
         int altura = Math.max((int) (baseAltura * escala), minAltura);
 
         tela.setSize(largura, altura);
-        tela.setMinimumSize(new Dimension(largura, altura));
+        tela.setMinimumSize(new Dimension(minLargura, minAltura));
+
+        if(estado == JFrame.MAXIMIZED_BOTH) {
+            tela.setLocationRelativeTo(null);
+            if (tela instanceof JFrame) {
+                ((JFrame) tela).setExtendedState(JFrame.MAXIMIZED_BOTH);
+            }
+        } else {
+            if (posicao == null) {
+                tela.setLocationRelativeTo(null);
+            } else {
+                tela.setLocation(posicao);
+            }
+        }
     }
 
     public static JPanel criarCaixa(String titulo, JTextField campo) {
@@ -94,5 +107,84 @@ public class Utilidades {
         bloco.add(campo, BorderLayout.CENTER);
 
         return bloco;
+    }
+
+    public static void configurarMenuTabela(JTable tabela, JMenuItem... itens) {
+        JPopupMenu menuContexto = new JPopupMenu();
+
+        JMenuItem itemTitulo = new JMenuItem("ID: ");
+        itemTitulo.setEnabled(false);
+        itemTitulo.setFont(new Font("SansSerif", Font.BOLD, 12));
+
+        menuContexto.add(itemTitulo);
+
+        for (JMenuItem item : itens) {
+            menuContexto.add(item);
+        }
+
+        tabela.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                verificarLinha(e);
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                verificarLinha(e);
+            }
+
+            private void verificarLinha(MouseEvent e) {
+                if (e.isPopupTrigger()) {
+                    int linha = tabela.rowAtPoint(e.getPoint());
+
+                    if (linha >= 0 && linha < tabela.getRowCount()) {
+                        tabela.setRowSelectionInterval(linha, linha);
+
+                        Object id = tabela.getValueAt(linha, 0);
+                        itemTitulo.setText("ID: " + id);
+
+                        menuContexto.show(e.getComponent(), e.getX(), e.getY());
+                    }
+                }
+            }
+        });
+    }
+
+    public static boolean confirmarAcao(JFrame tela, String mensagem, String titulo) {
+        int resposta = JOptionPane.showConfirmDialog(
+                tela,
+                mensagem,
+                titulo,
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE
+        );
+        return resposta == JOptionPane.YES_OPTION;
+    }
+
+    public static void mensagemErro(JFrame tela, String mensagem, String titulo) {
+        JOptionPane.showMessageDialog(
+                tela,
+                mensagem,
+                titulo,
+                JOptionPane.ERROR_MESSAGE
+        );
+    }
+
+    public static void mensagemAviso(JFrame tela, String mensagem, String titulo) {
+        JOptionPane.showMessageDialog(
+                tela,
+                mensagem,
+                titulo,
+                JOptionPane.WARNING_MESSAGE
+        );
+    }
+
+    public static void mensagemInformacao(JFrame tela, String mensagem, String titulo) {
+        JOptionPane.showMessageDialog(
+                tela,
+                mensagem,
+                titulo,
+                JOptionPane.INFORMATION_MESSAGE
+        );
     }
 }
