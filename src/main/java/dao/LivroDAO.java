@@ -2,6 +2,7 @@ package dao;
 
 import java.sql.*;
 import conexao.Conexao;
+import excecoes.*;
 import modelos.Livro;
 import java.util.ArrayList;
 
@@ -55,6 +56,25 @@ public class LivroDAO {
         }
         return livros;
     }
+
+    public Livro buscarPorId(int id) throws SQLException, RegistroNaoEncontradoException {
+        String sql = "SELECT id, titulo, autor, isbn, total_exemplares, exemplares_disponiveis FROM livro WHERE id = ?";
+
+        try (Connection conexao = Conexao.conectar();
+             PreparedStatement declaracao = conexao.prepareStatement(sql)) {
+
+            declaracao.setInt(1, id);
+
+            try (ResultSet rs = declaracao.executeQuery()) {
+                if (rs.next()) {
+                    return new Livro(rs.getInt("id"), rs.getString("titulo"), rs.getString("autor"),
+                            rs.getString("isbn"), rs.getInt("total_exemplares"), rs.getInt("exemplares_disponiveis"));
+                }
+            }
+        }
+        throw new RegistroNaoEncontradoException("Não há nenhum livro com o Id " + id + ".");
+    }
+
 
     public void atualizar(Livro livro) throws SQLException {
         String sql = "UPDATE livro SET titulo = ?, autor = ?, isbn = ?, total_exemplares = ?, exemplares_disponiveis = ? WHERE id = ?";

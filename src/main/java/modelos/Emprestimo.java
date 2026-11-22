@@ -33,6 +33,15 @@ public class Emprestimo {
 		this.dataDevolucao = null;
 	}
 
+	public Emprestimo(int id, Usuario usuario, Livro livro, LocalDate dataEmprestimo, LocalDate dataPrevista, LocalDate dataDevolucao) {
+		this.id = id;
+		this.usuario = usuario;
+		this.livro = livro;
+		this.dataEmprestimo = dataEmprestimo;
+		this.dataPrevista = dataPrevista;
+		this.dataDevolucao = dataDevolucao;
+	}
+
 	public void setId(int id) {
     	this.id = id;
 	}
