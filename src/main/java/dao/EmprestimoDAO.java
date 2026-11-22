@@ -4,17 +4,16 @@ import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import conexao.Conexao;
-import excecoes.RegistroNaoEncontradoException;
+import excecoes.*;
 import modelos.*;
 
 public class EmprestimoDAO {
+    private LivroDAO livroDAO = new LivroDAO();
     private static final String SELECT = """
-            SELECT e.id, e.data_emprestimo, e.data_prevista, e.data_devolucao, e.multa,
-                   u.id AS id_usuario, u.nome, u.matricula, u.limite, u.tipo_usuario,
-                   l.id AS id_livro, l.titulo, l.autor, l.isbn, l.total_exemplares, l.exemplares_disponiveis
+            SELECT e.id, e.id_livro, e.data_emprestimo, e.data_prevista, e.data_devolucao, e.multa,
+                   u.id AS id_usuario, u.nome, u.matricula, u.limite, u.tipo_usuario
             FROM emprestimo e
-            JOIN usuario u ON u.id = e.id_usuario
-            JOIN livro l ON l.id = e.id_livro""";
+            JOIN usuario u ON u.id = e.id_usuario""";
 
     public void cadastrar(Emprestimo emprestimo) throws SQLException {
         String sql = "INSERT INTO emprestimo (id_livro, id_usuario, data_emprestimo, data_prevista) VALUES (?, ?, ?, ?)";
@@ -37,7 +36,7 @@ public class EmprestimoDAO {
         }
     }
 
-    public ArrayList<Emprestimo> listar() throws SQLException {
+    public ArrayList<Emprestimo> listar() throws SQLException, RegistroNaoEncontradoException {
         ArrayList<Emprestimo> emprestimos = new ArrayList<>();
 
         try (Connection conexao = Conexao.conectar();
@@ -86,34 +85,26 @@ public class EmprestimoDAO {
         }
     }
 
-    private Emprestimo montarEmprestimo(ResultSet rs) throws SQLException {
+    private Emprestimo montarEmprestimo(ResultSet rs) throws SQLException, RegistroNaoEncontradoException {
+        Livro livro = livroDAO.buscarPorId(rs.getInt("id_livro"));
+
         int limite = rs.getInt("limite");
         Usuario usuario;
-
         if ("Professor".equalsIgnoreCase(rs.getString("tipo_usuario"))) {
             usuario = new Professor(rs.getInt("id_usuario"), rs.getString("nome"), rs.getString("matricula"), limite);
         } else {
             usuario = new Aluno(rs.getInt("id_usuario"), rs.getString("nome"), rs.getString("matricula"), limite);
         }
 
-        Livro livro = new Livro(
-            rs.getInt("id_livro"),
-            rs.getString("titulo"),
-            rs.getString("autor"),
-            rs.getString("isbn"),
-            rs.getInt("total_exemplares"),
-            rs.getInt("exemplares_disponiveis")
-        );
-
         String devolucao = rs.getString("data_devolucao");
 
         return new Emprestimo(
-            rs.getInt("id"),
-            usuario,
-            livro,
-            LocalDate.parse(rs.getString("data_emprestimo")),
-            LocalDate.parse(rs.getString("data_prevista")),
-            devolucao == null ? null : LocalDate.parse(devolucao)
+                rs.getInt("id"),
+                usuario,
+                livro,
+                LocalDate.parse(rs.getString("data_emprestimo")),
+                LocalDate.parse(rs.getString("data_prevista")),
+                devolucao == null ? null : LocalDate.parse(devolucao)
         );
     }
 }
