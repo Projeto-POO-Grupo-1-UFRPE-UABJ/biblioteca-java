@@ -14,6 +14,13 @@ public abstract class Usuario {
 		this.matricula = matricula;
 		this.limite = 0;
 	}
+
+	public Usuario(int id, String nome, String matricula, int limite) {
+    	this.id = id;
+    	this.nome = nome;
+    	this.matricula = matricula;
+    	this.limite = limite;
+	}
 	
 	public void setNome(String nome) {
 		this.nome = nome;

@@ -32,6 +32,10 @@ public class Emprestimo {
 		this.dataPrevista = dataEmprestimo.plusDays(usuario.getPrazo());
 		this.dataDevolucao = null;
 	}
+
+	public void setId(int id) {
+    	this.id = id;
+	}
 	
 	public int getId() {
 		return id;
