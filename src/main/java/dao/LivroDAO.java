@@ -7,7 +7,7 @@ import modelos.Livro;
 import java.util.ArrayList;
 
 public class LivroDAO {
-    public void cadastrar(Livro livro) throws SQLException {
+    public static void cadastrar(Livro livro) throws SQLException {
         String sql = "INSERT INTO livro (titulo, autor, isbn, total_exemplares, exemplares_disponiveis) VALUES (?, ?, ?, ?, ?)";
         try (Connection conexao = Conexao.conectar();
                 PreparedStatement declaracao = conexao.prepareStatement(sql)) {
@@ -21,7 +21,7 @@ public class LivroDAO {
         }
     }
 
-    public ArrayList<Livro> listar() throws SQLException {
+    public static ArrayList<Livro> listar() throws SQLException {
         String sql = "SELECT id, titulo, autor, isbn, total_exemplares, exemplares_disponiveis FROM livro";
         ArrayList<Livro> livro = new ArrayList<>();
 
@@ -38,7 +38,7 @@ public class LivroDAO {
         return livro;
     }
 
-    public ArrayList<Livro> buscarPorTitulo(String termo) throws SQLException {
+    public static ArrayList<Livro> buscarPorTitulo(String termo) throws SQLException {
         String sql = "SELECT id, titulo, autor, isbn, total_exemplares, exemplares_disponiveis FROM livro WHERE titulo LIKE ?";
         ArrayList<Livro> livros = new ArrayList<>();
 
@@ -57,7 +57,7 @@ public class LivroDAO {
         return livros;
     }
 
-    public Livro buscarPorId(int id) throws SQLException, RegistroNaoEncontradoException {
+    public static Livro buscarPorId(int id) throws SQLException, RegistroNaoEncontradoException {
         String sql = "SELECT id, titulo, autor, isbn, total_exemplares, exemplares_disponiveis FROM livro WHERE id = ?";
 
         try (Connection conexao = Conexao.conectar();
@@ -76,7 +76,7 @@ public class LivroDAO {
     }
 
 
-    public void atualizar(Livro livro) throws SQLException {
+    public static void atualizar(Livro livro) throws SQLException {
         String sql = "UPDATE livro SET titulo = ?, autor = ?, isbn = ?, total_exemplares = ?, exemplares_disponiveis = ? WHERE id = ?";
 
         try (Connection conexao = Conexao.conectar();
@@ -93,7 +93,7 @@ public class LivroDAO {
         }
     }
 
-    public void remover(int id) throws SQLException {
+    public static void remover(int id) throws SQLException {
         String sql = "DELETE FROM livro WHERE id = ?";
 
         try (Connection conexao = Conexao.conectar();
