@@ -8,14 +8,14 @@ import excecoes.*;
 import modelos.*;
 
 public class EmprestimoDAO {
-    private LivroDAO livroDAO = new LivroDAO();
+
     private static final String SELECT = """
             SELECT e.id, e.id_livro, e.data_emprestimo, e.data_prevista, e.data_devolucao, e.multa,
                    u.id AS id_usuario, u.nome, u.matricula, u.limite, u.tipo_usuario
             FROM emprestimo e
             JOIN usuario u ON u.id = e.id_usuario""";
 
-    public void cadastrar(Emprestimo emprestimo) throws SQLException {
+    public static void cadastrar(Emprestimo emprestimo) throws SQLException {
         String sql = "INSERT INTO emprestimo (id_livro, id_usuario, data_emprestimo, data_prevista) VALUES (?, ?, ?, ?)";
         
         try (Connection conexao = Conexao.conectar();
@@ -36,7 +36,7 @@ public class EmprestimoDAO {
         }
     }
 
-    public ArrayList<Emprestimo> listar() throws SQLException, RegistroNaoEncontradoException {
+    public static ArrayList<Emprestimo> listar() throws SQLException, RegistroNaoEncontradoException {
         ArrayList<Emprestimo> emprestimos = new ArrayList<>();
 
         try (Connection conexao = Conexao.conectar();
@@ -50,7 +50,7 @@ public class EmprestimoDAO {
         return emprestimos;
     }
 
-    public Emprestimo buscarPorId(int id) throws SQLException, RegistroNaoEncontradoException {
+    public static Emprestimo buscarPorId(int id) throws SQLException, RegistroNaoEncontradoException {
         try (Connection conexao = Conexao.conectar();
              PreparedStatement declaracao = conexao.prepareStatement(SELECT + " WHERE e.id = ?")) {
 
@@ -65,7 +65,7 @@ public class EmprestimoDAO {
         throw new RegistroNaoEncontradoException("Não há nenhum empréstimo com o Id " + id + ".");
     }
 
-    public void atualizar(Emprestimo emprestimo) throws SQLException {
+    public static void atualizar(Emprestimo emprestimo) throws SQLException {
         String sql = "UPDATE emprestimo SET data_devolucao = ?, multa = ? WHERE id = ?";
 
         try (Connection conexao = Conexao.conectar();
@@ -85,8 +85,8 @@ public class EmprestimoDAO {
         }
     }
 
-    private Emprestimo montarEmprestimo(ResultSet rs) throws SQLException, RegistroNaoEncontradoException {
-        Livro livro = livroDAO.buscarPorId(rs.getInt("id_livro"));
+    private static Emprestimo montarEmprestimo(ResultSet rs) throws SQLException, RegistroNaoEncontradoException {
+        Livro livro = LivroDAO.buscarPorId(rs.getInt("id_livro"));
 
         int limite = rs.getInt("limite");
         Usuario usuario;

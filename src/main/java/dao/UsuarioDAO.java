@@ -7,7 +7,7 @@ import excecoes.*;
 import modelos.*;
 
 public class UsuarioDAO {
-    public void cadastrar(Usuario usuario) throws SQLException {
+    public static void cadastrar(Usuario usuario) throws SQLException {
         String sql = "INSERT INTO usuario (nome, matricula, tipo_usuario, limite) VALUES (?, ?, ?, ?)";
 
         try (Connection conexao = Conexao.conectar();
@@ -21,7 +21,7 @@ public class UsuarioDAO {
         }
     }
 
-    public ArrayList<Usuario> listar() throws SQLException {
+    public static ArrayList<Usuario> listar() throws SQLException {
         ArrayList<Usuario> usuarios = new ArrayList<>();
 
         try (Connection conexao = Conexao.conectar();
@@ -35,7 +35,7 @@ public class UsuarioDAO {
         return usuarios;
     }
     
-    public ArrayList<Usuario> buscarPorNomeOuMatricula(String termo) throws SQLException {
+    public static ArrayList<Usuario> buscarPorNomeOuMatricula(String termo) throws SQLException {
         String sql = "SELECT id, nome, matricula, limite, tipo_usuario FROM usuario WHERE nome LIKE ? OR matricula LIKE ? ORDER BY id";
         ArrayList<Usuario> usuarios = new ArrayList<>();
 
@@ -54,7 +54,7 @@ public class UsuarioDAO {
         return usuarios;
     }
 
-    public Usuario buscarPorId(int id) throws SQLException, RegistroNaoEncontradoException {
+    public static Usuario buscarPorId(int id) throws SQLException, RegistroNaoEncontradoException {
         try (Connection conexao = Conexao.conectar();
                 PreparedStatement declaracao = conexao.prepareStatement("SELECT id, nome, matricula, limite, tipo_usuario FROM usuario WHERE id = ?")) {
 
@@ -70,7 +70,7 @@ public class UsuarioDAO {
         throw new RegistroNaoEncontradoException("Não há nenhum usuário com o Id " + id + ".");
     }
 
-    public void atualizar(Usuario usuario) throws SQLException {
+    public static void atualizar(Usuario usuario) throws SQLException {
         String sql = "UPDATE usuario SET nome = ?, matricula = ? WHERE id = ?";
 
         try (Connection conexao = Conexao.conectar();
@@ -84,7 +84,7 @@ public class UsuarioDAO {
         }
     }
 
-    public void atualizarLimite(Usuario usuario) throws SQLException {
+    public static void atualizarLimite(Usuario usuario) throws SQLException {
         String sql = "UPDATE usuario SET limite = ? WHERE id = ?";
 
         try (Connection conexao = Conexao.conectar();
@@ -97,7 +97,7 @@ public class UsuarioDAO {
         }
     }
 
-    public void remover(int id) throws SQLException {
+    public static void remover(int id) throws SQLException {
         String sql = "DELETE FROM usuario WHERE id = ?";
 
         try (Connection conexao = Conexao.conectar();
@@ -109,7 +109,7 @@ public class UsuarioDAO {
         }
     }
 
-    private Usuario montarUsuario(ResultSet rs) throws SQLException {
+    private static Usuario montarUsuario(ResultSet rs) throws SQLException {
         int id = rs.getInt("id");
         String nome = rs.getString("nome");
         String matricula = rs.getString("matricula");
