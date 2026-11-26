@@ -40,10 +40,14 @@ public class BibliotecaApp {
                     break;
 
                 case 5:
-                    realizarEmprestimo();
+                    cadastrarUsuario();
                     break;
 
                 case 6  :
+                    realizarEmprestimo();
+                    break;
+
+                case 7  :
                     encerrarEmprestimo();
                     break;
 
@@ -65,8 +69,9 @@ public class BibliotecaApp {
         System.out.println("2 - Listar Usuários");
         System.out.println("3 - Listar Empréstimos");
         System.out.println("4 - Cadastrar Livro");
-        System.out.println("5 - Realizar Empréstimo");
-        System.out.println("6 - Encerrar Empréstimo");
+        System.out.println("5 - Cadastrar Usuário");
+        System.out.println("6 - Realizar Empréstimo");
+        System.out.println("7 - Encerrar Empréstimo");
         System.out.println("0 - Sair");
         System.out.print("Escolha uma opção: ");
     }
@@ -116,6 +121,32 @@ public class BibliotecaApp {
             System.out.println("\nErro ao cadastrar livro: " + e.getMessage() + "\n");
         }
     }
+
+    private static void cadastrarUsuario() {
+    String nome = lerTexto("Digite o nome do usuário: ");
+    String matricula = lerTexto("Digite a matrícula do usuário: ");
+
+    int tipo;
+    do {
+        tipo = lerInteiro("Digite o tipo do usuário (1 - Aluno, 2 - Professor): ");
+        if (tipo != 1 && tipo != 2) {
+            System.out.println("\nOpção inválida!\nDigite 1 ou 2.\n");
+        }
+    } while (tipo != 1 && tipo != 2);
+
+    Usuario usuario = (tipo == 1) ? new Aluno(0, nome, matricula) : new Professor(0, nome, matricula);
+
+    try {
+        UsuarioDAO.cadastrar(usuario);
+        System.out.println("\nUsuário cadastrado com sucesso!\n");
+    } catch (SQLException e) {
+        if (e.getMessage() != null && e.getMessage().contains("UNIQUE constraint failed")) {
+            System.out.println("\nErro ao cadastrar usuário: já existe um usuário com a matrícula " + matricula + ".\n");
+        } else {
+            System.out.println("\nErro ao cadastrar usuário: " + e.getMessage() + "\n");
+        }
+    }
+}
 
     private static void listarLivros() {
         try {
