@@ -21,6 +21,8 @@ public class GerenciadorEmprestimos {
     
     public static Emprestimo realizarEmprestimo(Usuario usuario, Livro livro) throws LivroIndisponivelException, LimiteEmprestimosException, SQLException {
         Emprestimo emprestimo = new Emprestimo(0, usuario, livro);
+        LivroDAO.atualizar(emprestimo.getLivro());
+        UsuarioDAO.atualizar(emprestimo.getUsuario());
 
         return EmprestimoDAO.cadastrar(emprestimo);
     }
