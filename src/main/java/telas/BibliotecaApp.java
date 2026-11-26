@@ -36,10 +36,14 @@ public class BibliotecaApp {
                     break;
 
                 case 4:
-                    realizarEmprestimo();
+                    cadastrarLivro();
                     break;
 
                 case 5:
+                    realizarEmprestimo();
+                    break;
+
+                case 6  :
                     encerrarEmprestimo();
                     break;
 
@@ -60,8 +64,9 @@ public class BibliotecaApp {
         System.out.println("1 - Listar Livros");
         System.out.println("2 - Listar Usuários");
         System.out.println("3 - Listar Empréstimos");
-        System.out.println("4 - Realizar Empréstimo");
-        System.out.println("5 - Encerrar Empréstimo");
+        System.out.println("4 - Cadastrar Livro");
+        System.out.println("5 - Realizar Empréstimo");
+        System.out.println("6 - Encerrar Empréstimo");
         System.out.println("0 - Sair");
         System.out.print("Escolha uma opção: ");
     }
@@ -98,17 +103,26 @@ public class BibliotecaApp {
         }
     }
 
-    private static void listarLivros() throws SQLException {
-        ArrayList<Livro> livros = GerenciadorLivros.getLivros();
-        if(livros.isEmpty()) {
-            System.out.println("\nNenhum livro cadastrado.\n");
-            return;
+    private static void cadastrarLivro() {
+        String titulo = lerTexto("Digite o título do livro: ");
+        String autor = lerTexto("Digite o autor do livro: ");
+        String isbn = lerTexto("Digite o ISBN do livro: ");
+        int totalExemplares = lerInteiro("Digite o número total de exemplares do livro: ");
+
+        try {
+            GerenciadorLivros.cadastrarLivro(titulo, autor, isbn, totalExemplares);
+            System.out.println("\nLivro cadastrado com sucesso!\n");
+        } catch (OperacaoInvalidaException | SQLException e) {
+            System.out.println("\nErro ao cadastrar livro: " + e.getMessage() + "\n");
         }
-        
-        System.out.println("\n===== Livros Cadastrados =====");
-        for (Livro livro: livros) {
-            System.out.println(GerenciadorLivros.formatarLivro(livro));
-            System.out.println("");
+    }
+
+    private static void listarLivros() {
+        try {
+            String resultado = GerenciadorLivros.listarLivros();
+            System.out.println("\n" + resultado + "\n");
+        } catch (SQLException e) {
+            System.out.println("\nErro ao listar livros: " + e.getMessage() + "\n");
         }
     }
 
