@@ -1,5 +1,6 @@
 package telas;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Scanner;
 import gerenciadores.*;
@@ -10,7 +11,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class BibliotecaApp {
-    
+
     private static ArrayList<Usuario> usuarios = new ArrayList<>(List.of(
         new Aluno(1, "Ana Beatriz Silva", "20241100123"),
         new Aluno(2, "Bruno Henrique Costa", "20241100456"),
@@ -33,12 +34,9 @@ public class BibliotecaApp {
         new Livro(10, "Redes de Computadores", "Andrew S. Tanenbaum", "978-85-3520-092-8", 3)
     ));
 
-
-    private static GerenciadorEmprestimos gerenciador = new GerenciadorEmprestimos();
-
     private static Scanner scanner = new Scanner(System.in);
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException, RegistroNaoEncontradoException {
 
         int opcao;
 
@@ -181,17 +179,19 @@ public class BibliotecaApp {
         Usuario usuario = buscarUsuario(lerInteiro("Digite o ID do usuário: "));
         Livro livro = buscarLivro(lerInteiro("Digite o ID do livro: "));
 
-        Emprestimo e = gerenciador.realizarEmprestimo(usuario, livro);
+        Emprestimo e = GerenciadorEmprestimos.realizarEmprestimo(usuario, livro);
         System.out.println("\nEmpréstimo " + e.getId() + " realizado. Devolver até " + e.getDataPrevista() + ".\n");
     } catch (LimiteEmprestimosException | LivroIndisponivelException | RegistroNaoEncontradoException e) {
         System.out.println("\nNão foi possível emprestar:\n" + e.getMessage() + "\n");
+    } catch (SQLException e) {
+        System.out.println("\nErro ao conectar ao banco de dados: " + e.getMessage() + "\n");
     }
-}
+    }
 
 	private static void encerrarEmprestimo() {
 	    try {
 	        System.out.println("\nEncerrando Empréstimo: ");
-	        Emprestimo emprestimo = gerenciador.buscarEmprestimo(lerInteiro("Digite o ID do empréstimo: "));
+	        Emprestimo emprestimo = GerenciadorEmprestimos.buscarEmprestimo(lerInteiro("Digite o ID do empréstimo: "));
 	        int id = emprestimo.getId();
 	        
 	        if (!emprestimo.estaAberto()) {
@@ -218,10 +218,10 @@ public class BibliotecaApp {
 			
 			double multa;
 			if (resposta.equalsIgnoreCase("s")) {
-			    multa = gerenciador.encerrarEmprestimo(id);
+			    multa = GerenciadorEmprestimos.encerrarEmprestimo(id);
 			} else {
 			    LocalDate data = LocalDate.parse(lerTexto("Data de devolução (AAAA-MM-DD): "));
-			    multa = gerenciador.encerrarEmprestimo(id, data);
+			    multa = GerenciadorEmprestimos.encerrarEmprestimo(id, data);
 			}
 	
 	        System.out.println("\nEmpréstimo encerrado. " +
@@ -231,33 +231,35 @@ public class BibliotecaApp {
 	        System.out.println("\nNão foi possível encerrar:\n" + e.getMessage() + "\n");
 	    } catch (DateTimeParseException e) {
 	        System.out.println("\nData inválida.\nUse o formato AAAA-MM-DD.\n");
-	    }
-	}
+	    } catch (SQLException e) {
+            System.out.println("\nErro ao conectar ao banco de dados: " + e.getMessage() + "\n");
+        }
+    }
 
 
-    private static void listarEmprestimos() {
+    private static void listarEmprestimos() throws SQLException, RegistroNaoEncontradoException {
 		System.out.println("");
         
         switch (lerInteiro("Deseja filtrar os empréstimos?\n(1 - Todos, 2 - Ativos, 3 - Encerrados, 4 - Atrasados): ")) {
             case 1:
             	System.out.println("");
-                System.out.println(gerenciador.listarEmprestimos(FiltroEmprestimos.TODOS));
+                System.out.println(GerenciadorEmprestimos.listarEmprestimos(FiltroEmprestimos.TODOS));
                 break;
             case 2:
             	System.out.println("");
-                System.out.println(gerenciador.listarEmprestimos(FiltroEmprestimos.ATIVOS));
+                System.out.println(GerenciadorEmprestimos.listarEmprestimos(FiltroEmprestimos.ATIVOS));
                 break;
             case 3:
             	System.out.println("");
-                System.out.println(gerenciador.listarEmprestimos(FiltroEmprestimos.ENCERRADOS));
+                System.out.println(GerenciadorEmprestimos.listarEmprestimos(FiltroEmprestimos.ENCERRADOS));
                 break;
             case 4:
             	System.out.println("");
-                System.out.println(gerenciador.listarEmprestimos(FiltroEmprestimos.ATRASADOS));
+                System.out.println(GerenciadorEmprestimos.listarEmprestimos(FiltroEmprestimos.ATRASADOS));
                 break;
             default:
                 System.out.println("\nOpção inválida. Mostrando todos os empréstimos.\n");
-                System.out.println(gerenciador.listarEmprestimos(FiltroEmprestimos.TODOS));
+                System.out.println(GerenciadorEmprestimos.listarEmprestimos(FiltroEmprestimos.TODOS));
         }
     }
 }
