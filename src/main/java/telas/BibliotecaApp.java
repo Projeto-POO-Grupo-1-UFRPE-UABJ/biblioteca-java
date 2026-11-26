@@ -55,15 +55,19 @@ public class BibliotecaApp {
                     removerLivro();
                     break;
 
-                case 9  :
-                    realizarEmprestimo();
+                case 9 :
+                    removerUsuario();
                     break;
 
                 case 10 :
-                    encerrarEmprestimo();
+                    realizarEmprestimo();
                     break;
 
                 case 11 :
+                    encerrarEmprestimo();
+                    break;
+
+                case 12 :
                     apagarEmprestimo();
                     break;
 
@@ -89,9 +93,10 @@ public class BibliotecaApp {
         System.out.println("6 - Buscar Livros");
         System.out.println("7 - Editar Livros");
         System.out.println("8 - Remover Livros");
-        System.out.println("9 - Realizar Empréstimo");
-        System.out.println("10 - Encerrar Empréstimo");
-        System.out.println("11 - Apagar Empréstimo");
+        System.out.println("9 - Remover Usuário");
+        System.out.println("10 - Realizar Empréstimo");
+        System.out.println("11 - Encerrar Empréstimo");
+        System.out.println("12 - Apagar Empréstimo");
         System.out.println("0 - Sair");
         System.out.print("Escolha uma opção: ");
     }
@@ -267,6 +272,39 @@ public class BibliotecaApp {
     	System.out.println(" | Prazo: " + usuario.getPrazo() + " dias | Multa: R$ " + String.format("%.2f", usuario.getTaxa())
     	+ " por dia | Empréstimos: " + usuario.getLimite() + "/" + usuario.getLimiteMaximo());
     }
+
+    private static void removerUsuario() {
+        try {
+            System.out.println("\nRemovendo Usuário: ");
+            Usuario usuario = UsuarioDAO.buscarPorId(lerInteiro("Digite o ID do usuário: "));
+
+            System.out.println("\nUsuário encontrado: " + usuario.getNome() + " | Matrícula: " + usuario.getMatricula() + "\n");
+
+            String resposta;
+            do {
+                resposta = lerTexto("Tem certeza que deseja remover este usuário? (s/n): ");
+                if (!resposta.equalsIgnoreCase("s") && !resposta.equalsIgnoreCase("n")) {
+                    System.out.println("\nOpção inválida!\nDigite 's' ou 'n'.\n");
+                }
+            } while (!resposta.equalsIgnoreCase("s") && !resposta.equalsIgnoreCase("n"));
+
+            if (resposta.equalsIgnoreCase("n")) {
+                System.out.println("\nOperação cancelada.\n");
+                return;
+            }
+
+            UsuarioDAO.remover(usuario.getId());
+            System.out.println("\nUsuário removido com sucesso!\n");
+        } catch (RegistroNaoEncontradoException e) {
+            System.out.println("\nNão foi possível remover:\n" + e.getMessage() + "\n");
+        } catch (SQLException e) {
+            if (e.getMessage() != null && e.getMessage().contains("FOREIGN KEY constraint failed")) {
+                System.out.println("\nNão foi possível remover:\nEste usuário possui empréstimos registrados.\n");
+            } else {
+                System.out.println("\nErro ao conectar ao banco de dados: " + e.getMessage() + "\n");
+                }
+            }
+        }
 
 
     private static void realizarEmprestimo() {
