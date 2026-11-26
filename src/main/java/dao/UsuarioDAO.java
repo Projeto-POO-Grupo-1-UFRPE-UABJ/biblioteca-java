@@ -71,14 +71,15 @@ public class UsuarioDAO {
     }
 
     public static void atualizar(Usuario usuario) throws SQLException {
-        String sql = "UPDATE usuario SET nome = ?, matricula = ? WHERE id = ?";
+        String sql = "UPDATE usuario SET nome = ?, matricula = ?, limite = ? WHERE id = ?";
 
         try (Connection conexao = Conexao.conectar();
                 PreparedStatement declaracao = conexao.prepareStatement(sql)) {
 
             declaracao.setString(1, usuario.getNome());
             declaracao.setString(2, usuario.getMatricula());
-            declaracao.setInt(3, usuario.getId());
+            declaracao.setInt(3,usuario.getLimite());
+            declaracao.setInt(4, usuario.getId());
 
             declaracao.executeUpdate();
         }
