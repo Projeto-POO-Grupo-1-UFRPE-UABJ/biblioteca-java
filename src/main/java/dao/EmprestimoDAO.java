@@ -15,7 +15,7 @@ public class EmprestimoDAO {
             FROM emprestimo e
             JOIN usuario u ON u.id = e.id_usuario""";
 
-    public static void cadastrar(Emprestimo emprestimo) throws SQLException {
+    public static Emprestimo cadastrar(Emprestimo emprestimo) throws SQLException {
         String sql = "INSERT INTO emprestimo (id_livro, id_usuario, data_emprestimo, data_prevista) VALUES (?, ?, ?, ?)";
         
         try (Connection conexao = Conexao.conectar();
@@ -34,6 +34,7 @@ public class EmprestimoDAO {
                 }
             }
         }
+        return emprestimo;
     }
 
     public static ArrayList<Emprestimo> listar() throws SQLException, RegistroNaoEncontradoException {

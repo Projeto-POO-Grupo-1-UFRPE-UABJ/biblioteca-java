@@ -1,54 +1,46 @@
 package gerenciadores;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.lang.StringBuilder;
 import java.time.LocalDate;
+
 import modelos.*;
 import excecoes.*;
+import dao.*;
 
 public class GerenciadorEmprestimos {
-	private ArrayList<Emprestimo> emprestimos;
     
-    public GerenciadorEmprestimos() {
-        this.emprestimos = new ArrayList<>();
-    }
-    
-    public GerenciadorEmprestimos(ArrayList<Emprestimo> emprestimos) {
-        this.emprestimos = new ArrayList<Emprestimo>(emprestimos);
-    }
-    
-    public ArrayList<Emprestimo> getEmprestimos() {
-        return new ArrayList<Emprestimo>(emprestimos);
+    public static ArrayList<Emprestimo> getEmprestimos() throws SQLException, RegistroNaoEncontradoException {
+        return EmprestimoDAO.listar();
     }
 
-    public Emprestimo buscarEmprestimo(int id) throws RegistroNaoEncontradoException {
-        for (Emprestimo emprestimo : emprestimos) {
-            if(emprestimo.getId() == id) {
-                return emprestimo;
-            }
-        }
-        throw new RegistroNaoEncontradoException("Não há nenhum empréstimo com o Id " + id + ".");
+    public static Emprestimo buscarEmprestimo(int id) throws RegistroNaoEncontradoException, SQLException {
+        return EmprestimoDAO.buscarPorId(id);
     }
     
-    public Emprestimo realizarEmprestimo(Usuario usuario, Livro livro) throws LivroIndisponivelException, LimiteEmprestimosException {
-        Emprestimo emprestimo = new Emprestimo(emprestimos.size() + 1, usuario, livro);
-        emprestimos.add(emprestimo);
-        return emprestimo;
+    public static Emprestimo realizarEmprestimo(Usuario usuario, Livro livro) throws LivroIndisponivelException, LimiteEmprestimosException, SQLException {
+        Emprestimo emprestimo = new Emprestimo(0, usuario, livro);
+
+        return EmprestimoDAO.cadastrar(emprestimo);
     }
     
-    public double encerrarEmprestimo(int id) throws RegistroNaoEncontradoException, EmprestimoEncerradoException {
+    public static double encerrarEmprestimo(int id) throws RegistroNaoEncontradoException, EmprestimoEncerradoException, SQLException {
         return encerrarEmprestimo(id, LocalDate.now());
     }
     
-    public double encerrarEmprestimo(int id, LocalDate dataDevolucao) throws RegistroNaoEncontradoException, EmprestimoEncerradoException {
-        return buscarEmprestimo(id).devolver(dataDevolucao);
+    public static double encerrarEmprestimo(int id, LocalDate dataDevolucao) throws RegistroNaoEncontradoException, EmprestimoEncerradoException, SQLException {
+        Emprestimo emprestimo = buscarEmprestimo(id);
+        double multa = emprestimo.devolver(dataDevolucao);
+        EmprestimoDAO.atualizar(emprestimo);
+        LivroDAO.atualizar(emprestimo.getLivro());
+        UsuarioDAO.atualizar(emprestimo.getUsuario());
+
+        return multa;
     }
     
-    public String listarEmprestimos() {
-    	return listarEmprestimos(FiltroEmprestimos.TODOS);
-    }
-    
-    public String listarEmprestimos(FiltroEmprestimos filtro) {
+    public static String listarEmprestimos(FiltroEmprestimos filtro) throws SQLException, RegistroNaoEncontradoException {
+        ArrayList<Emprestimo> emprestimos = EmprestimoDAO.listar();
         if (emprestimos.isEmpty()) {
             return "Ainda não há nenhum empréstimo cadastrado.\n\n";
         } else {
@@ -114,7 +106,7 @@ public class GerenciadorEmprestimos {
         }
     }
     
-    public String formatarEmprestimo(Emprestimo emprestimo) {
+    public static String formatarEmprestimo(Emprestimo emprestimo) {
         StringBuilder sb = new StringBuilder();
 
         sb.append("Id: ").append(emprestimo.getId()).append("\n");
