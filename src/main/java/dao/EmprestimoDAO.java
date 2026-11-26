@@ -108,4 +108,15 @@ public class EmprestimoDAO {
                 devolucao == null ? null : LocalDate.parse(devolucao)
         );
     }
+
+    public static void remover(int id) throws SQLException {
+        String sql = "DELETE FROM emprestimo WHERE id = ?";
+
+        try (Connection conexao = Conexao.conectar();
+             PreparedStatement declaracao = conexao.prepareStatement(sql)) {
+
+            declaracao.setInt(1, id);
+            declaracao.executeUpdate();
+        }
+    }
 }
