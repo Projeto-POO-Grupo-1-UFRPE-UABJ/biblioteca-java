@@ -138,4 +138,9 @@ public class GerenciadorEmprestimos {
 
         return sb.toString();
     }
+
+    public static void apagarEmprestimo(int id) throws SQLException, RegistroNaoEncontradoException {
+        Emprestimo emprestimo = buscarEmprestimo(id);
+        EmprestimoDAO.remover(emprestimo.getId());
+    }
 }
