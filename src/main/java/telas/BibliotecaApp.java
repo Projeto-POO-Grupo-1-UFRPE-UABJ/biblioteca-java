@@ -3,37 +3,15 @@ package telas;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Scanner;
+
+import dao.UsuarioDAO;
 import gerenciadores.*;
 import modelos.*;
 import excecoes.*;
 import java.time.format.DateTimeParseException;
 import java.time.LocalDate;
-import java.util.List;
 
 public class BibliotecaApp {
-
-    private static ArrayList<Usuario> usuarios = new ArrayList<>(List.of(
-        new Aluno(1, "Ana Beatriz Silva", "20241100123"),
-        new Aluno(2, "Bruno Henrique Costa", "20241100456"),
-        new Aluno(3, "Carla Maria Souza", "20231100789"),
-        new Aluno(4, "Diego Albuquerque Lima", "20251100234"),
-        new Professor(5, "Marcos Vinícius Cavalcanti", "2345678"),
-        new Professor(6, "Lúcia Helena Barros", "3456789")
-    ));
-
-    private static ArrayList<Livro> livros = new ArrayList<>(List.of(
-        new Livro(1, "Cálculo, Volume 1", "James Stewart", "978-85-2161-042-7", 4),
-        new Livro(2, "Física Básica, Volume 1: Mecânica", "H. Moysés Nussenzveig", "978-85-2120-118-2", 3),
-        new Livro(3, "Algoritmos: Teoria e Prática", "Thomas H. Cormen", "978-85-3520-077-5", 3),
-        new Livro(4, "Java: Como Programar", "Paul Deitel", "978-85-7605-215-9", 5),
-        new Livro(5, "Dom Casmurro", "Machado de Assis", "978-85-3591-103-9", 2),
-        new Livro(6, "Vidas Secas", "Graciliano Ramos", "978-85-0101-506-8", 3),
-        new Livro(7, "Sapiens: Uma Breve História da Humanidade", "Yuval Noah Harari", "978-85-3591-220-3", 2),
-        new Livro(8, "Casa-Grande & Senzala", "Gilberto Freyre", "978-85-2602-031-3", 1),
-        new Livro(9, "Fisiologia Vegetal", "Lincoln Taiz e Eduardo Zeiger", "978-85-8271-154-5", 4),
-        new Livro(10, "Redes de Computadores", "Andrew S. Tanenbaum", "978-85-3520-092-8", 3)
-    ));
-
     private static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) throws SQLException, RegistroNaoEncontradoException {
@@ -120,7 +98,8 @@ public class BibliotecaApp {
         }
     }
 
-    private static void listarLivros() {
+    private static void listarLivros() throws SQLException {
+        ArrayList<Livro> livros = GerenciadorLivros.getLivros();
         if(livros.isEmpty()) {
             System.out.println("\nNenhum livro cadastrado.\n");
             return;
@@ -128,18 +107,13 @@ public class BibliotecaApp {
         
         System.out.println("\n===== Livros Cadastrados =====");
         for (Livro livro: livros) {
-            exibirLivro(livro);
+            System.out.println(GerenciadorLivros.formatarLivro(livro));
             System.out.println("");
         }
     }
 
-    private static void exibirLivro(Livro livro) {
-        System.out.println("ID: " + livro.getId() + " | Título: " + livro.getTitulo() + " | Autor: " + livro.getAutor() + 
-        " | ISBN: " + livro.getIsbn());
-        System.out.println(" | Exemplares Disponíveis: " + livro.getExemplaresDisponiveis() + " | Total de Exemplares: " + livro.getTotalExemplares());
-    }
-
-    private static void listarUsuarios() {
+    private static void listarUsuarios() throws SQLException {
+        ArrayList<Usuario> usuarios = UsuarioDAO.listar();
         if(usuarios.isEmpty()) {
             System.out.println("\nNenhum usuário cadastrado.\n");
             return;
@@ -159,25 +133,12 @@ public class BibliotecaApp {
     	+ " por dia | Empréstimos: " + usuario.getLimite() + "/" + usuario.getLimiteMaximo());
     }
 
-    private static Usuario buscarUsuario(int id) throws RegistroNaoEncontradoException {
-	    for (Usuario usuario : usuarios) {
-	        if (usuario.getId() == id) return usuario;
-	    }
-	    throw new RegistroNaoEncontradoException("Não há nenhum usuário com o Id " + id + ".");
-	}
-
-    private static Livro buscarLivro(int id) throws RegistroNaoEncontradoException {
-	    for (Livro livro : livros) {
-	        if (livro.getId() == id) return livro;
-	    }
-	    throw new RegistroNaoEncontradoException("Não há nenhum livro com o Id " + id + ".");
-	}
 
     private static void realizarEmprestimo() {
     try {
         System.out.println("\nRealizando Empréstimo: ");
-        Usuario usuario = buscarUsuario(lerInteiro("Digite o ID do usuário: "));
-        Livro livro = buscarLivro(lerInteiro("Digite o ID do livro: "));
+        Usuario usuario = UsuarioDAO.buscarPorId(lerInteiro("Digite o ID do usuário: "));
+        Livro livro = GerenciadorLivros.buscarLivro(lerInteiro("Digite o ID do livro: "));
 
         Emprestimo e = GerenciadorEmprestimos.realizarEmprestimo(usuario, livro);
         System.out.println("\nEmpréstimo " + e.getId() + " realizado. Devolver até " + e.getDataPrevista() + ".\n");
