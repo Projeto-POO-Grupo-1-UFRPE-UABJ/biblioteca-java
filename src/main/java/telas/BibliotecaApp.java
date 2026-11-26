@@ -91,7 +91,7 @@ public class BibliotecaApp {
         System.out.println("8 - Remover Livros");
         System.out.println("9 - Realizar Empréstimo");
         System.out.println("10 - Encerrar Empréstimo");
-        System.out.println("11 - Apagar Emprestimo");
+        System.out.println("11 - Apagar Empréstimo");
         System.out.println("0 - Sair");
         System.out.print("Escolha uma opção: ");
     }
