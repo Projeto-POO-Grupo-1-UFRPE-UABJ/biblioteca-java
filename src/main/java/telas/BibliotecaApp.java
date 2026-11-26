@@ -48,10 +48,18 @@ public class BibliotecaApp {
                     break;
 
                 case 7  :
+                    editarLivro();
+                    break;
+
+                case 8  :
+                    removerLivro();
+                    break;
+
+                case 9  :
                     realizarEmprestimo();
                     break;
 
-                case 8 :
+                case 10 :
                     encerrarEmprestimo();
                     break;
 
@@ -74,9 +82,11 @@ public class BibliotecaApp {
         System.out.println("3 - Listar Empréstimos");
         System.out.println("4 - Cadastrar Livro");
         System.out.println("5 - Cadastrar Usuário");
-        System.out.println("6 - Buscar livros");
-        System.out.println("7 - Realizar Empréstimo");
-        System.out.println("8 - Encerrar Empréstimo");
+        System.out.println("6 - Buscar Livros");
+        System.out.println("7 - Editar Livros");
+        System.out.println("8 - Remover Livros");
+        System.out.println("9 - Realizar Empréstimo");
+        System.out.println("10 - Encerrar Empréstimo");
         System.out.println("0 - Sair");
         System.out.print("Escolha uma opção: ");
     }
@@ -155,6 +165,31 @@ public class BibliotecaApp {
         }
     }
 
+    private static String lerTextoOuManter(String mensagem, String atual) {
+    System.out.print(mensagem + " [" + atual + "]: ");
+    String texto = scanner.nextLine().trim();
+    return texto.isEmpty() ? atual : texto;
+    }
+
+    private static void editarLivro() {
+    try {
+        System.out.println("\nEditando Livro: ");
+        Livro livro = GerenciadorLivros.buscarLivro(lerInteiro("Digite o ID do livro: "));
+
+        System.out.println("\nLivro encontrado. Aperte Enter para manter o valor atual.\n");
+        String titulo = lerTextoOuManter("Título", livro.getTitulo());
+        String autor = lerTextoOuManter("Autor", livro.getAutor());
+        String isbn = lerTextoOuManter("ISBN", livro.getIsbn());
+
+        GerenciadorLivros.editarLivro(livro.getId(), titulo, autor, isbn);
+        System.out.println("\nLivro atualizado com sucesso!\n");
+    } catch (RegistroNaoEncontradoException | OperacaoInvalidaException e) {
+        System.out.println("\nNão foi possível editar:\n" + e.getMessage() + "\n");
+    } catch (SQLException e) {
+        System.out.println("\nErro ao conectar ao banco de dados: " + e.getMessage() + "\n");
+        }
+    }
+
     private static void buscarLivros() {
     String termo = lerTexto("Digite o título ou o autor: ");
 
@@ -162,8 +197,41 @@ public class BibliotecaApp {
         System.out.println("\n" + GerenciadorLivros.listarLivros(termo) + "\n");
     } catch (SQLException e) {
         System.out.println("\nErro ao buscar livros: " + e.getMessage() + "\n");
+        }
     }
-}
+
+    private static void removerLivro() {
+    try {
+        System.out.println("\nRemovendo Livro: ");
+        Livro livro = GerenciadorLivros.buscarLivro(lerInteiro("Digite o ID do livro: "));
+
+        System.out.println("\nLivro encontrado: " + livro.getTitulo() + " | Autor: " + livro.getAutor() + "\n");
+
+        String resposta;
+        do {
+            resposta = lerTexto("Tem certeza que deseja remover este livro? (s/n): ");
+            if (!resposta.equalsIgnoreCase("s") && !resposta.equalsIgnoreCase("n")) {
+                System.out.println("\nOpção inválida!\nDigite 's' ou 'n'.\n");
+            }
+        } while (!resposta.equalsIgnoreCase("s") && !resposta.equalsIgnoreCase("n"));
+
+        if (resposta.equalsIgnoreCase("n")) {
+            System.out.println("\nOperação cancelada.\n");
+            return;
+        }
+
+        GerenciadorLivros.removerLivro(livro.getId());
+        System.out.println("\nLivro removido com sucesso!\n");
+    } catch (RegistroNaoEncontradoException | OperacaoInvalidaException e) {
+        System.out.println("\nNão foi possível remover:\n" + e.getMessage() + "\n");
+    } catch (SQLException e) {
+        if (e.getMessage() != null && e.getMessage().contains("FOREIGN KEY constraint failed")) {
+            System.out.println("\nNão foi possível remover:\nEste livro possui empréstimos registrados.\n");
+        } else {
+            System.out.println("\nErro ao conectar ao banco de dados: " + e.getMessage() + "\n");
+            }
+        }
+    }
 
     private static void listarLivros() {
         try {
