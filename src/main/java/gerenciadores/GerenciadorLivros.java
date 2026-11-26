@@ -7,7 +7,7 @@ import excecoes.*;
 import dao.*;
 
 public class GerenciadorLivros {
-    public static ArrayList<Livro> getLivros() throws SQLException, RegistroNaoEncontradoException {
+    public static ArrayList<Livro> getLivros() throws SQLException {
         return LivroDAO.listar();
     }
 
