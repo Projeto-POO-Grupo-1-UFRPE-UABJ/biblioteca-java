@@ -44,10 +44,14 @@ public class BibliotecaApp {
                     break;
 
                 case 6  :
-                    realizarEmprestimo();
+                    buscarLivros();
                     break;
 
                 case 7  :
+                    realizarEmprestimo();
+                    break;
+
+                case 8 :
                     encerrarEmprestimo();
                     break;
 
@@ -70,8 +74,9 @@ public class BibliotecaApp {
         System.out.println("3 - Listar Empréstimos");
         System.out.println("4 - Cadastrar Livro");
         System.out.println("5 - Cadastrar Usuário");
-        System.out.println("6 - Realizar Empréstimo");
-        System.out.println("7 - Encerrar Empréstimo");
+        System.out.println("6 - Buscar livros");
+        System.out.println("7 - Realizar Empréstimo");
+        System.out.println("8 - Encerrar Empréstimo");
         System.out.println("0 - Sair");
         System.out.print("Escolha uma opção: ");
     }
@@ -107,6 +112,8 @@ public class BibliotecaApp {
             }
         }
     }
+
+
 
     private static void cadastrarLivro() {
         String titulo = lerTexto("Digite o título do livro: ");
@@ -144,7 +151,17 @@ public class BibliotecaApp {
             System.out.println("\nErro ao cadastrar usuário: já existe um usuário com a matrícula " + matricula + ".\n");
         } else {
             System.out.println("\nErro ao cadastrar usuário: " + e.getMessage() + "\n");
+            }
         }
+    }
+
+    private static void buscarLivros() {
+    String termo = lerTexto("Digite o título ou o autor: ");
+
+    try {
+        System.out.println("\n" + GerenciadorLivros.listarLivros(termo) + "\n");
+    } catch (SQLException e) {
+        System.out.println("\nErro ao buscar livros: " + e.getMessage() + "\n");
     }
 }
 
@@ -191,7 +208,7 @@ public class BibliotecaApp {
         System.out.println("\nNão foi possível emprestar:\n" + e.getMessage() + "\n");
     } catch (SQLException e) {
         System.out.println("\nErro ao conectar ao banco de dados: " + e.getMessage() + "\n");
-    }
+        }
     }
 
 	private static void encerrarEmprestimo() {
