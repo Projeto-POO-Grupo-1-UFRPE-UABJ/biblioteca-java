@@ -47,27 +47,31 @@ public class BibliotecaApp {
                     buscarLivros();
                     break;
 
-                case 7  :
+                case 7:
                     editarLivro();
                     break;
 
                 case 8  :
+                    editarUsuarios();
+                    break;
+
+                case 9  :
                     removerLivro();
                     break;
 
-                case 9 :
+                case 10 :
                     removerUsuario();
                     break;
 
-                case 10 :
+                case 11 :
                     realizarEmprestimo();
                     break;
 
-                case 11 :
+                case 12 :
                     encerrarEmprestimo();
                     break;
 
-                case 12 :
+                case 13 :
                     apagarEmprestimo();
                     break;
 
@@ -92,11 +96,12 @@ public class BibliotecaApp {
         System.out.println("5 - Cadastrar Usuário");
         System.out.println("6 - Buscar Livros");
         System.out.println("7 - Editar Livros");
-        System.out.println("8 - Remover Livros");
-        System.out.println("9 - Remover Usuário");
-        System.out.println("10 - Realizar Empréstimo");
-        System.out.println("11 - Encerrar Empréstimo");
-        System.out.println("12 - Apagar Empréstimo");
+        System.out.println("8 - Editar Usuários");
+        System.out.println("9 - Remover Livros");
+        System.out.println("10 - Remover Usuário");
+        System.out.println("11 - Realizar Empréstimo");
+        System.out.println("12 - Encerrar Empréstimo");
+        System.out.println("13 - Apagar Empréstimo");
         System.out.println("0 - Sair");
         System.out.print("Escolha uma opção: ");
     }
@@ -302,10 +307,33 @@ public class BibliotecaApp {
                 System.out.println("\nNão foi possível remover:\nEste usuário possui empréstimos registrados.\n");
             } else {
                 System.out.println("\nErro ao conectar ao banco de dados: " + e.getMessage() + "\n");
-                }
             }
         }
+    }
 
+    private static void editarUsuarios() {
+        try {
+            System.out.println("\nEditando Usuário: ");
+            Usuario usuario = UsuarioDAO.buscarPorId(lerInteiro("Digite o ID do usuário: "));
+
+            System.out.println("\nUsuário encontrado. Aperte Enter para manter o valor atual.\n");
+            String nome = lerTextoOuManter("Nome", usuario.getNome());
+            String matricula = lerTextoOuManter("Matrícula", usuario.getMatricula());
+
+            usuario.setNome(nome);
+            usuario.setMatricula(matricula);
+            UsuarioDAO.atualizar(usuario);
+            System.out.println("\nUsuário atualizado com sucesso!\n");
+        } catch (RegistroNaoEncontradoException e) {
+            System.out.println("\nNão foi possível editar:\n" + e.getMessage() + "\n");
+        } catch (SQLException e) {
+            if (e.getMessage() != null && e.getMessage().contains("UNIQUE constraint failed")) {
+                System.out.println("\nErro ao editar usuário: já existe um usuário com a matrícula informada.\n");
+            } else {
+                System.out.println("\nErro ao conectar ao banco de dados: " + e.getMessage() + "\n");
+            }
+        }
+    }
 
     private static void realizarEmprestimo() {
     try {
