@@ -58,10 +58,18 @@ public class BibliotecaApp {
                     break;
 
                 case 4:
-                    realizarEmprestimo();
+                    cadastrarLivro();
                     break;
 
                 case 5:
+                    cadastrarUsuario();
+                    break;
+
+                case 6:
+                    realizarEmprestimo();
+                    break;
+
+                case 7  :
                     encerrarEmprestimo();
                     break;
 
@@ -82,8 +90,10 @@ public class BibliotecaApp {
         System.out.println("1 - Listar Livros");
         System.out.println("2 - Listar Usuários");
         System.out.println("3 - Listar Empréstimos");
-        System.out.println("4 - Realizar Empréstimo");
-        System.out.println("5 - Encerrar Empréstimo");
+        System.out.println("4 - Cadastrar Livro");
+        System.out.println("5 - Cadastrar Usuário");
+        System.out.println("6 - Realizar Empréstimo");
+        System.out.println("7 - Encerrar Empréstimo");
         System.out.println("0 - Sair");
         System.out.print("Escolha uma opção: ");
     }
@@ -118,6 +128,36 @@ public class BibliotecaApp {
                 System.out.println("\nPor favor, digite um número inteiro.\n");
             }
         }
+    }
+
+    private static void cadastrarUsuario() {
+        String nome = lerTexto("Digite o nome do usuário: ");
+        String matricula = lerTexto("Digite a matrícula do usuário: ");
+        int tipo = lerInteiro("Digite o tipo de usuário (1 - Aluno, 2 - Professor): ");
+
+        Usuario usuario;
+        if (tipo == 1) {
+            usuario = new Aluno(usuarios.size() + 1, nome, matricula);
+        } else if (tipo == 2) {
+            usuario = new Professor(usuarios.size() + 1, nome, matricula);
+        } else {
+            System.out.println("\nTipo de usuário inválido. Cadastro cancelado.\n");
+            return;
+        }
+
+        usuarios.add(usuario);
+        System.out.println("\nUsuário cadastrado com sucesso!\n");
+    }
+
+    private static void cadastrarLivro() {
+        String titulo = lerTexto("Digite o título do livro: ");
+        String autor = lerTexto("Digite o autor do livro: ");
+        String isbn = lerTexto("Digite o ISBN do livro: ");
+        int totalExemplares = lerInteiro("Digite o total de exemplares do livro: ");
+
+        Livro livro = new Livro(livros.size() + 1, titulo, autor, isbn, totalExemplares);
+        livros.add(livro);
+        System.out.println("\nLivro cadastrado com sucesso!\n");
     }
 
     private static void listarLivros() {
