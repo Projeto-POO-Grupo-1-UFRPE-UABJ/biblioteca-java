@@ -63,6 +63,10 @@ public class BibliotecaApp {
                     encerrarEmprestimo();
                     break;
 
+                case 11 :
+                    apagarEmprestimo();
+                    break;
+
                 case 0:
                     System.out.println("\nEncerrando o sistema...");
                     break;
@@ -87,6 +91,7 @@ public class BibliotecaApp {
         System.out.println("8 - Remover Livros");
         System.out.println("9 - Realizar Empréstimo");
         System.out.println("10 - Encerrar Empréstimo");
+        System.out.println("11 - Apagar Emprestimo");
         System.out.println("0 - Sair");
         System.out.print("Escolha uma opção: ");
     }
@@ -323,6 +328,39 @@ public class BibliotecaApp {
 	    } catch (DateTimeParseException e) {
 	        System.out.println("\nData inválida.\nUse o formato AAAA-MM-DD.\n");
 	    } catch (SQLException e) {
+            System.out.println("\nErro ao conectar ao banco de dados: " + e.getMessage() + "\n");
+        }
+    }
+
+    private static void apagarEmprestimo() {
+        try {
+            System.out.println("\nApagando Empréstimo: ");
+            Emprestimo emprestimo = GerenciadorEmprestimos.buscarEmprestimo(lerInteiro("Digite o ID do empréstimo: "));
+            int id = emprestimo.getId();
+            
+            System.out.println("\nEmpréstimo de Id " + id + " encontrado:");
+            System.out.println("\nUsuário: " + emprestimo.getUsuario().getNome() 
+                + " | Livro: " + emprestimo.getLivro().getTitulo() 
+                + " | Data prevista: " + emprestimo.getDataPrevista() + "\n");
+            
+            String resposta;
+            do {
+                resposta = lerTexto("Tem certeza que deseja apagar este empréstimo? (s/n): ");
+                if (!resposta.equalsIgnoreCase("s") && !resposta.equalsIgnoreCase("n")) {
+                    System.out.println("\nOpção inválida!\nDigite 's' ou 'n'.\n");
+                }
+            } while (!resposta.equalsIgnoreCase("s") && !resposta.equalsIgnoreCase("n"));
+            
+            if (resposta.equalsIgnoreCase("n")) {
+                System.out.println("\nOperação cancelada.\n");
+                return;
+            }
+            
+            GerenciadorEmprestimos.apagarEmprestimo(id);
+            System.out.println("\nEmpréstimo apagado com sucesso!\n");
+        } catch (RegistroNaoEncontradoException e) {
+            System.out.println("\nNão foi possível apagar:\n" + e.getMessage() + "\n");
+        } catch (SQLException e) {
             System.out.println("\nErro ao conectar ao banco de dados: " + e.getMessage() + "\n");
         }
     }
